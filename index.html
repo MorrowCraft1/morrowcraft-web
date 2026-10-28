@@ -1,1 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MorrowCraft | Cross-Play Minecraft Network</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#111113',
+                            card: '#18181b',
+                            cardHover: '#222226',
+                            red: '#9F0809',
+                            redHover: '#7F0607',
+                            green: '#22AA22',
+                            greenHover: '#1B881B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #111113;
+            color: #e4e4e7;
+            font-family: 'Inter', sans-serif;
+        }
+        .small-caps {
+            font-variant: small-caps;
+            letter-spacing: 0.05em;
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .glow-red {
+            box-shadow: 0 0 25px -5px rgba(159, 8, 9, 0.4);
+        }
+        .glow-green {
+            box-shadow: 0 0 15px -3px rgba(34, 170, 34, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-brand-dark min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white">
 
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 ease-in-out bg-brand-red text-white px-5 py-3 rounded-lg shadow-2xl flex items-center gap-3 border border-red-500/30">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-message" class="font-medium text-sm">Server IP copied to clipboard!</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-md border-b border-zinc-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#home" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg bg-brand-red flex items-center justify-center text-white font-extrabold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                    M
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-xl tracking-wider text-white small-caps leading-none">Morrow<span class="text-brand-red">Craft</span></span>
+                    <span class="text-[10px] text-zinc-400 tracking-widest uppercase mt-0.5">Network</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+                <a href="#home" class="text-zinc-300 hover:text-white transition-colors">Home</a>
+                <a href="#features" class="text-zinc-400 hover:text-white transition-colors">Features</a>
+                <a href="#news" class="text-zinc-400 hover:text-white transition-colors">News</a>
+                <a href="#staff" class="text-zinc-400 hover:text-white transition-colors">Staff</a>
+                <a href="#guides" class="text-zinc-400 hover:text-white transition-colors">Guides & FAQ</a>
+                <a href="https://store.morrowcraft.net" target="_blank" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5">
+                    Store <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+                <a href="https://discord.morrowcraft.net" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 border border-zinc-700/50">
+                    <i class="fa-brands fa-discord text-indigo-400"></i> Discord
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-zinc-400 hover:text-white focus:outline-none p-2">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dropdown Nav -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-card border-b border-zinc-800 px-4 pt-2 pb-6 space-y-3">
+            <a href="#home" class="block py-2 text-zinc-300 font-medium">Home</a>
+            <a href="#features" class="block py-2 text-zinc-400 font-medium">Features</a>
+            <a href="#news" class="block py-2 text-zinc-400 font-medium">News</a>
+            <a href="#staff" class="block py-2 text-zinc-400 font-medium">Staff</a>
+            <a href="#guides" class="block py-2 text-zinc-400 font-medium">Guides & FAQ</a>
+            <a href="https://store.morrowcraft.net" target="_blank" class="block py-2 text-zinc-400 font-medium">Store</a>
+            <a href="https://discord.morrowcraft.net" target="_blank" class="inline-flex items-center gap-2 bg-indigo-600/20 text-indigo-300 px-4 py-2 rounded-lg w-full justify-center">
+                <i class="fa-brands fa-discord"></i> Join Discord
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section id="home" class="relative pt-12 pb-20 md:pt-24 md:pb-32 bg-grid-pattern overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto space-y-6">
+                    
+                    <!-- Crossplay Tag -->
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs font-semibold text-zinc-300 shadow-inner">
+                        <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+                        Java & Bedrock Cross-Play Supported
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white small-caps leading-tight">
+                        Morrow<span class="text-brand-red">Craft</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto font-normal">
+                        A modern, community-driven survival network built for seamless Java and Bedrock cross-play with proximity voice chat integration.
+                    </p>
+
+                    <!-- Server Status & Copy IP Bar -->
+                    <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
+                        
+                        <!-- IP Copy Button -->
+                        <button onclick="copyIP('play.morrowcraft.net')" class="w-full sm:w-auto flex-1 bg-brand-red hover:bg-brand-redHover text-white px-6 py-4 rounded-xl font-bold flex items-center justify-between group transition-all glow-red">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-server text-lg"></i>
+                                <div class="text-left">
+                                    <div class="text-[10px] uppercase tracking-wider text-red-200">Server Address</div>
+                                    <div class="font-mono text-base tracking-wide">play.morrowcraft.net</div>
+                                </div>
+                            </div>
+                            <span class="bg-black/20 group-hover:bg-black/40 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ml-4">
+                                Copy IP
+                            </span>
+                        </button>
+
+                        <!-- Live Status Card -->
+                        <div class="w-full sm:w-auto bg-brand-card border border-zinc-800 px-6 py-4 rounded-xl flex items-center justify-between sm:justify-center gap-4">
+                            <div id="status-indicator" class="w-3.5 h-3.5 rounded-full bg-zinc-600"></div>
+                            <div class="text-left">
+                                <div id="status-text" class="text-xs uppercase font-semibold text-zinc-400 tracking-wider">Checking Status...</div>
+                                <div id="player-count" class="font-mono text-lg font-bold text-white">-- / -- Players</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Web Links Bar -->
+                    <div class="pt-4 flex flex-wrap justify-center gap-3 text-xs font-medium text-zinc-400">
+                        <a href="https://voice.morrowcraft.net" target="_blank" class="px-3.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 hover:text-white transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-microphone text-brand-green"></i> Proximity Voice Web
+                        </a>
+                        <a href="https://discord.morrowcraft.net" target="_blank" class="px-3.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 hover:text-white transition-all flex items-center gap-2">
+                            <i class="fa-brands fa-discord text-indigo-400"></i> discord.morrowcraft.net
+                        </a>
+                        <a href="https://store.morrowcraft.net" target="_blank" class="px-3.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 hover:text-white transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-cart-shopping text-yellow-500"></i> store.morrowcraft.net
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="features" class="py-16 bg-brand-dark/50 border-t border-zinc-800/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white small-caps">Server Highlights</h2>
+                    <p class="text-zinc-400 text-sm mt-2">Designed from the ground up for stability, fairness, and player immersion.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <div class="bg-brand-card p-6 rounded-2xl border border-zinc-800/80 hover:border-zinc-700 transition-all hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-brand-red/10 border border-brand-red/20 text-brand-red rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Cross-Play Ready</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            Full Geyser & Floodgate setup. Java and Bedrock players (iOS, Android, Xbox, Switch, Windows) seamlessly play together.
+                        </p>
+                    </div>
+
+                    <div class="bg-brand-card p-6 rounded-2xl border border-zinc-800/80 hover:border-zinc-700 transition-all hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-brand-green/10 border border-brand-green/20 text-brand-green rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-walkie-talkie"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Proximity Voice Chat</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            SimpleVoice-Geyser powered audio proxy. Talk to nearby players directly in-game or via browser at <code class="text-xs bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300">voice.morrowcraft.net</code>.
+                        </p>
+                    </div>
+
+                    <div class="bg-brand-card p-6 rounded-2xl border border-zinc-800/80 hover:border-zinc-700 transition-all hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Grief-Free Survival</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            Intuitive land claiming and chest locking systems so your builds and items are permanently safe while you build your empire.
+                        </p>
+                    </div>
+
+                    <div class="bg-brand-card p-6 rounded-2xl border border-zinc-800/80 hover:border-zinc-700 transition-all hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Player Economy</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            Player-driven markets, auction houses, jobs, and trading systems balanced for long-term survival gameplay.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- News & Updates Section -->
+        <section id="news" class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white small-caps">Latest News & Updates</h2>
+                        <p class="text-zinc-400 text-sm mt-1">Stay tuned with recent patches, events, and community announcements.</p>
+                    </div>
+                    <a href="https://discord.morrowcraft.net" target="_blank" class="text-xs font-semibold text-brand-red hover:underline flex items-center gap-1">
+                        View all on Discord <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- News Post 1 -->
+                    <article class="bg-brand-card border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between text-xs text-zinc-500 mb-3">
+                                <span class="bg-brand-red/10 text-brand-red border border-brand-red/20 px-2.5 py-0.5 rounded-full font-semibold">Network</span>
+                                <span>Recent Update</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Domain Migration & Voice Chat Proxy</h3>
+                            <p class="text-zinc-400 text-sm line-clamp-3">
+                                We have fully migrated our domain to <code class="text-zinc-200">morrowcraft.net</code>! SimpleVoice-Geyser is now active at <code class="text-zinc-200">voice.morrowcraft.net</code> with 24/7 Bloom Host proxying.
+                            </p>
+                        </div>
+                        <div class="px-6 py-4 bg-zinc-900/50 border-t border-zinc-800/50 flex items-center justify-between text-xs text-zinc-400">
+                            <span>Posted by <strong class="text-zinc-200">Admin Team</strong></span>
+                            <i class="fa-solid fa-bullhorn text-zinc-500"></i>
+                        </div>
+                    </article>
+
+                    <!-- News Post 2 -->
+                    <article class="bg-brand-card border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between text-xs text-zinc-500 mb-3">
+                                <span class="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2.5 py-0.5 rounded-full font-semibold">Bedrock</span>
+                                <span>Guide</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Floodgate Auto-Linking Tutorial</h3>
+                            <p class="text-zinc-400 text-sm line-clamp-3">
+                                Bedrock players can now log into voice chat effortlessly using their Floodgate dot prefix (e.g. <code class="text-zinc-200">.Username</code>) or using the in-game <code class="text-zinc-200">/svg</code> command.
+                            </p>
+                        </div>
+                        <div class="px-6 py-4 bg-zinc-900/50 border-t border-zinc-800/50 flex items-center justify-between text-xs text-zinc-400">
+                            <span>Posted by <strong class="text-zinc-200">Dev Team</strong></span>
+                            <i class="fa-solid fa-book text-zinc-500"></i>
+                        </div>
+                    </article>
+
+                    <!-- News Post 3 -->
+                    <article class="bg-brand-card border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between text-xs text-zinc-500 mb-3">
+                                <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold">Community</span>
+                                <span>Event</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Season Launch & Build Contest</h3>
+                            <p class="text-zinc-400 text-sm line-clamp-3">
+                                Our new survival world is live! Join today, claim your land, and participate in our inaugural spawn build contest for exclusive store rewards.
+                            </p>
+                        </div>
+                        <div class="px-6 py-4 bg-zinc-900/50 border-t border-zinc-800/50 flex items-center justify-between text-xs text-zinc-400">
+                            <span>Posted by <strong class="text-zinc-200">Staff</strong></span>
+                            <i class="fa-solid fa-trophy text-zinc-500"></i>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Roster Grid -->
+        <section id="staff" class="py-16 bg-brand-dark/50 border-t border-zinc-800/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white small-caps">Staff Roster</h2>
+                    <p class="text-zinc-400 text-sm mt-1">The dedicated team keeping MorrowCraft secure, fun, and running smoothly.</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    
+                    <!-- Staff Member 1 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-brand-red/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_Steve/80" alt="Owner Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">OwnerName</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-red/20 text-brand-red border border-brand-red/30">Owner</span>
+                    </div>
+
+                    <!-- Staff Member 2 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-blue-500/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_Alex/80" alt="Dev Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">DevLead</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Developer</span>
+                    </div>
+
+                    <!-- Staff Member 3 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-purple-500/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_Villager/80" alt="Admin Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">AdminUser</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">Admin</span>
+                    </div>
+
+                    <!-- Staff Member 4 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-brand-green/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_Enderman/80" alt="Mod Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">ModOne</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-green/20 text-brand-green border border-brand-green/30">Moderator</span>
+                    </div>
+
+                    <!-- Staff Member 5 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-brand-green/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_PigZombie/80" alt="Mod Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">ModTwo</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-green/20 text-brand-green border border-brand-green/30">Moderator</span>
+                    </div>
+
+                    <!-- Staff Member 6 -->
+                    <div class="bg-brand-card p-4 rounded-xl border border-zinc-800 text-center flex flex-col items-center hover:border-zinc-500/50 transition-colors">
+                        <img src="https://mc-heads.net/avatar/MHF_Golem/80" alt="Helper Avatar" class="w-16 h-16 rounded-lg mb-3 shadow-md bg-zinc-900">
+                        <h4 class="font-bold text-white text-sm">HelperPlus</h4>
+                        <span class="mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-700/50 text-zinc-300 border border-zinc-600">Helper</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Server Guides & Accordion FAQ -->
+        <section id="guides" class="py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white small-caps">Player Guides & FAQ</h2>
+                    <p class="text-zinc-400 text-sm mt-1">Everything you need to know about connecting and playing on MorrowCraft.</p>
+                </div>
+
+                <div class="space-y-4">
+                    
+                    <!-- Item 1 -->
+                    <div class="bg-brand-card rounded-xl border border-zinc-800 overflow-hidden">
+                        <button onclick="toggleAccordion('faq-1')" class="w-full px-6 py-4 text-left font-bold text-white flex justify-between items-center hover:bg-zinc-800/40 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-solid fa-mobile-screen text-brand-red"></i>
+                                How do I join from Bedrock Edition (iOS, Android, Xbox, Switch)?
+                            </span>
+                            <i id="faq-1-icon" class="fa-solid fa-chevron-down text-xs text-zinc-400 transition-transform"></i>
+                        </button>
+                        <div id="faq-1" class="hidden px-6 py-4 text-sm text-zinc-400 border-t border-zinc-800/60 leading-relaxed bg-zinc-900/30">
+                            Add a new server on Bedrock using server IP <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">play.morrowcraft.net</code> and port <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">19132</code> (default Bedrock port). Floodgate handles authentication automatically!
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="bg-brand-card rounded-xl border border-zinc-800 overflow-hidden">
+                        <button onclick="toggleAccordion('faq-2')" class="w-full px-6 py-4 text-left font-bold text-white flex justify-between items-center hover:bg-zinc-800/40 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-solid fa-headset text-brand-green"></i>
+                                How does Proximity Voice Chat work?
+                            </span>
+                            <i id="faq-2-icon" class="fa-solid fa-chevron-down text-xs text-zinc-400 transition-transform"></i>
+                        </button>
+                        <div id="faq-2" class="hidden px-6 py-4 text-sm text-zinc-400 border-t border-zinc-800/60 leading-relaxed bg-zinc-900/30">
+                            Run <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">/svg</code> or <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">/svg link</code> in game to get your instant login URL for <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">voice.morrowcraft.net</code>. Bedrock users should log into the web client using their dot prefix (e.g. <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">.Username</code>) or set a password with <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">/svg pswd &lt;password&gt;</code>.
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="bg-brand-card rounded-xl border border-zinc-800 overflow-hidden">
+                        <button onclick="toggleAccordion('faq-3')" class="w-full px-6 py-4 text-left font-bold text-white flex justify-between items-center hover:bg-zinc-800/40 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-solid fa-shield text-blue-400"></i>
+                                How do I protect my land and build?
+                            </span>
+                            <i id="faq-3-icon" class="fa-solid fa-chevron-down text-xs text-zinc-400 transition-transform"></i>
+                        </button>
+                        <div id="faq-3" class="hidden px-6 py-4 text-sm text-zinc-400 border-t border-zinc-800/60 leading-relaxed bg-zinc-900/30">
+                            Equip a Golden Shovel or run <code class="text-zinc-200 bg-zinc-800 px-1.5 py-0.5 rounded">/claim</code> at the corners of your area. You earn claim blocks automatically just by playing on the server!
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="bg-brand-card rounded-xl border border-zinc-800 overflow-hidden">
+                        <button onclick="toggleAccordion('faq-4')" class="w-full px-6 py-4 text-left font-bold text-white flex justify-between items-center hover:bg-zinc-800/40 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-solid fa-gavel text-amber-400"></i>
+                                Where can I submit a Ban Appeal or Support Ticket?
+                            </span>
+                            <i id="faq-4-icon" class="fa-solid fa-chevron-down text-xs text-zinc-400 transition-transform"></i>
+                        </button>
+                        <div id="faq-4" class="hidden px-6 py-4 text-sm text-zinc-400 border-t border-zinc-800/60 leading-relaxed bg-zinc-900/30">
+                            You can open an appeal ticket directly through our Discord server at <a href="https://discord.morrowcraft.net" target="_blank" class="text-brand-red underline">discord.morrowcraft.net</a> or click the "Submit Appeal" button below.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Ban Appeal Button -->
+                <div class="mt-8 text-center">
+                    <button onclick="openAppealModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 px-6 py-3 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-brand-red"></i> Submit a Ban Appeal
+                    </button>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Ban Appeal Modal -->
+    <div id="appeal-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-zinc-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative space-y-4">
+            <button onclick="closeAppealModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white small-caps">Submit Ban Appeal</h3>
+            <p class="text-xs text-zinc-400">Please provide your exact in-game username and details surrounding your ban.</p>
+            
+            <form id="appeal-form" onsubmit="handleAppealSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-zinc-400 mb-1">In-Game Username</label>
+                    <input type="text" required placeholder="e.g. .PlayerName or PlayerName" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-red">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-zinc-400 mb-1">Reason for Appeal</label>
+                    <textarea required rows="4" placeholder="Explain why your punishment should be reconsidered..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-red"></textarea>
+                </div>
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeAppealModal()" class="px-4 py-2 text-sm text-zinc-400 hover:text-white">Cancel</button>
+                    <button type="submit" class="px-5 py-2 text-sm bg-brand-red hover:bg-brand-redHover text-white font-semibold rounded-lg transition-colors">Send Appeal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black/60 border-t border-zinc-800/80 py-12 text-sm text-zinc-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-brand-red flex items-center justify-center text-white font-extrabold text-sm">M</div>
+                <div>
+                    <div class="font-bold text-white small-caps">MorrowCraft Network</div>
+                    <div class="text-xs text-zinc-600">Not affiliated with Mojang AB or Microsoft.</div>
+                </div>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-400 font-medium">
+                <a href="https://discord.morrowcraft.net" target="_blank" class="hover:text-white transition-colors">Discord</a>
+                <a href="https://store.morrowcraft.net" target="_blank" class="hover:text-white transition-colors">Store</a>
+                <a href="https://voice.morrowcraft.net" target="_blank" class="hover:text-white transition-colors">Voice Chat</a>
+                <a href="#guides" class="hover:text-white transition-colors">FAQ</a>
+            </div>
+
+            <div class="text-xs text-zinc-600">
+                &copy; 2026 MorrowCraft. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Fetch Live Minecraft Server Status
+        async function fetchServerStatus() {
+            const statusIndicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            const playerCount = document.getElementById('player-count');
+
+            try {
+                // Using mcsrvstat API for play.morrowcraft.net
+                const response = await fetch('https://api.mcsrvstat.us/2/play.morrowcraft.net');
+                const data = await response.json();
+
+                if (data.online) {
+                    statusIndicator.className = 'w-3.5 h-3.5 rounded-full bg-brand-green glow-green animate-pulse';
+                    statusText.innerText = 'Server Online';
+                    statusText.className = 'text-xs uppercase font-semibold text-brand-green tracking-wider';
+                    playerCount.innerText = `${data.players.online} / ${data.players.max} Online`;
+                } else {
+                    statusIndicator.className = 'w-3.5 h-3.5 rounded-full bg-amber-500';
+                    statusText.innerText = 'Server Offline / Maint';
+                    statusText.className = 'text-xs uppercase font-semibold text-amber-500 tracking-wider';
+                    playerCount.innerText = '0 / -- Online';
+                }
+            } catch (error) {
+                console.error('Error fetching server status:', error);
+                statusIndicator.className = 'w-3.5 h-3.5 rounded-full bg-brand-red';
+                statusText.innerText = 'Status Unavailable';
+                playerCount.innerText = 'play.morrowcraft.net';
+            }
+        }
+
+        // Copy IP with Toast Feedback
+        function copyIP(ip) {
+            navigator.clipboard.writeText(ip).then(() => {
+                showToast(`Copied "${ip}" to clipboard!`);
+            }).catch(err => {
+                showToast('Failed to copy IP!');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.innerText = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // FAQ Accordion Toggle
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`${id}-icon`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Appeal Modal Handlers
+        function openAppealModal() {
+            document.getElementById('appeal-modal').classList.remove('hidden');
+        }
+
+        function closeAppealModal() {
+            document.getElementById('appeal-modal').classList.add('hidden');
+        }
+
+        function handleAppealSubmit(event) {
+            event.preventDefault();
+            closeAppealModal();
+            showToast('Appeal submitted! Check Discord for updates.');
+            document.getElementById('appeal-form').reset();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            fetchServerStatus();
+            // Refresh player count every 60 seconds
+            setInterval(fetchServerStatus, 60000);
+        };
+    </script>
+</body>
+</html>
