@@ -9,21 +9,20 @@ Live server status needs nothing extra. The browser asks a public status service
 
 ---
 
-## 1. Decide where the website lives
+## 1. Hosting on morrowcraft.net (Cloudflare)
 
-| Option | Cost | How the data gets to the site |
-|---|---|---|
-| **A. GitHub Pages, public repo** | Free | Service commits JSON to a `data` branch. Site reads it from GitHub. |
-| **B. Cloudflare Pages or Netlify, private repo** | Free | Service commits JSON to `main`. The host redeploys on each commit. |
-| **C. Your own web host or VPS** | Varies | Service writes files straight into `data/` next to the site. |
+Your domain is on Cloudflare, so the simplest setup is **Cloudflare Pages** connected to this GitHub repo. It works with a private repo and is free.
 
-Your repo is currently **private**. GitHub Pages on a private repo needs a paid GitHub plan, so choose A (make the repo public), B or C. Making it public is safe because no secrets live in the repo. Passwords and tokens only ever go in `service/.env`, which is git-ignored.
+1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → pick `morrowcraft-web`.
+2. Build settings: framework **None**, build command empty, output directory `/` (the repo root).
+3. Under **Custom domains**, add `morrowcraft.net` and `www.morrowcraft.net`.
+4. If the site is already deployed this way, you do not need to change anything. Cloudflare Pages also builds every branch as a **preview**, so the `new-site` branch gets its own preview link you can check before it goes live.
 
-Set `data.base` in `site.config.js` to match:
+The data service commits fresh JSON files to the repo, and Cloudflare redeploys the site when that happens. The service skips a commit when nothing changed, so you only get a redeploy when something is new (a new post, a rank change, a leaderboard shift). With a 15 minute interval the leaderboard will change most runs. If you want fewer deploys, raise `INTERVAL_MINUTES` in `.env` (30 or 60 is fine).
 
-- **A:** `https://raw.githubusercontent.com/MorrowCraft1/morrowcraft-web/data/data/` (and `PUBLISH_MODE=github`, `GITHUB_BRANCH=data`)
-- **B:** `./data/` (and `PUBLISH_MODE=github`, `GITHUB_BRANCH=main`)
-- **C:** `./data/` (and `PUBLISH_MODE=files`)
+`data.base` in `site.config.js` stays at `./data/`.
+
+Alternative: if you would rather not redeploy on every data update, keep the data on a `data` branch of a public repo and set `data.base` to `https://raw.githubusercontent.com/MorrowCraft1/morrowcraft-web/data/data/`. That only works if the repo is public.
 
 ## 2. Move LuckPerms into MySQL/MariaDB (one time)
 
@@ -67,7 +66,7 @@ Create a database user that can only **read** (`SELECT`) the LuckPerms and leade
 
 To keep it running after you close the terminal, use a process manager such as `pm2` (`pm2 start index.js --name morrowcraft-data`).
 
-### GitHub token (options A and B only)
+### GitHub token
 
 GitHub → Settings → Developer settings → Fine-grained tokens → generate a token for **only** `morrowcraft-web` with **Contents: Read and write**. Put it in `.env` as `GITHUB_TOKEN`.
 

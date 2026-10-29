@@ -60,7 +60,7 @@ window.SITE = {
     store: "https://store.morrowcraft.net",
     discord: "https://discord.morrowcraft.net",
     voice: "https://voice.morrowcraft.net",
-    applications: "https://discord.gg/ZgQX8Qshy6",   // TODO: swap for the direct link to your applications channel
+    applications: "https://discord.com/channels/1102069205290975325/1438255195199901767",
     email: "support@morrowcraft.net"
   },
 
