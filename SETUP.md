@@ -20,7 +20,7 @@ Your domain is on Cloudflare, so the simplest setup is **Cloudflare Pages** conn
 
 The data service commits fresh JSON files to the repo, and Cloudflare redeploys the site when that happens. The service skips a commit when nothing changed, so you only get a redeploy when something is new (a new post, a rank change, a leaderboard shift). With a 15 minute interval the leaderboard will change most runs. If you want fewer deploys, raise `INTERVAL_MINUTES` in `.env` (30 or 60 is fine).
 
-`data.base` in `site.config.js` stays at `./data/`.
+`data.base` in `site.config.js` stays at `/data/`.
 
 Alternative: if you would rather not redeploy on every data update, keep the data on a `data` branch of a public repo and set `data.base` to `https://raw.githubusercontent.com/MorrowCraft1/morrowcraft-web/data/data/`. That only works if the repo is public.
 
@@ -113,6 +113,17 @@ Notes on the staff roster:
 - Your Owner is whoever is in the LuckPerms group `owner`.
 - The group `develepor` is spelled the way it is in LuckPerms. The website shows it as "Developer". If you rename the group, update the `key` too.
 - The **Apply on Discord** button uses `links.applications`. Replace it with the direct link to your applications channel (right-click the channel in Discord → Copy Link).
+
+## Editing the website (no coding)
+
+Everything you can change is in **`site.config.js`**. To edit it on GitHub: open the repo, click the file, click the **pencil** icon, change the text, then click **Commit changes**. Cloudflare updates the live site within a minute or two.
+
+- **Add an FAQ question:** find `faq: [`. Copy one whole block from `{ q:` to its `},`, paste it under the last one, and change the question (`q`) and answer (`a`). Keep the quote marks and the comma.
+- **Add or edit a feature on the Home page:** find `features: [`. Copy one line, paste it under the last one and change `title` and `text`.
+- **Add a picture to a feature:** on GitHub open the `assets` folder, then `features` (create it with **Add file, Create new file** and a name like `features/readme.txt` if it does not exist). Click **Add file, Upload files**, upload your image and commit. Then set `image: "/assets/features/yourfile.png"` on that feature.
+- **Add a console video link on the Bedrock page:** find the `links: [` line inside the Bedrock entry and add `{ label: "Console video guide", url: "https://..." }`.
+
+Page addresses: Home is `morrowcraft.net`. The others are `morrowcraft.net/join`, `/news`, `/leaderboard`, `/staff`, `/rules` and `/faq`. This relies on Cloudflare Pages treating the site as a single-page app, which it does when the project has **no `404.html` file**. Do not add one.
 
 ## 6. Security checklist
 

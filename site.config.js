@@ -16,25 +16,31 @@ window.SITE = {
 
   /* ---------- Identity ---------- */
   name: "MorrowCraft",
-  tagline: "Cross-play SMP · Season 3",
-  intro: "A Java and Bedrock survival server. Claim your land, team up, talk in proximity voice chat and climb the leaderboards.",
-  logo: "assets/logo.png",
+  intro: "MorrowCraft is a semi-vanilla survival server designed for both competitive PvP and chill gameplay. There are cool unique features that make the server fun so come check it out!",
+  logo: "/assets/logo.png",
 
-  /* ---------- Colours (your four brand colours + the navy) ---------- */
+  /* ---------- Colours ----------
+     red / redDeep and green / greenDeep are your four brand colours (light and dark).
+     bgLeft and bgRight tint the left and right edges of the page. */
   colors: {
     red: "#e90c09",
     redDeep: "#9f0809",
     green: "#55dd33",
     greenDeep: "#22aa22",
-    bg: "#070e26",
-    surface: "#0e1838",
-    surface2: "#152048",
-    line: "#223063",
+    bg: "#080d22",
+    bgLeft: "#2e080d",
+    bgRight: "#08301a",
+    shell: "#0c1331",
+    surface: "#121c42",
+    surface2: "#1a2759",
+    line: "#27376f",
     text: "#e9edf9",
     muted: "#9aa5c8"
   },
 
-  /* ---------- Tabs (order, names and ids; ids must be lowercase letters) ---------- */
+  /* ---------- Tabs (order and names) ----------
+     Home is morrowcraft.net. Every other tab is morrowcraft.net/<id>, for example morrowcraft.net/join.
+     ids must be lowercase letters. */
   tabs: [
     { id: "home",        label: "Home" },
     { id: "join",        label: "How to Join" },
@@ -67,7 +73,7 @@ window.SITE = {
   /* ---------- Where the site reads its live data from ----------
      "./data/" works when the data service writes into this folder.
      See SETUP.md for the other options. */
-  data: { base: "./data/" },
+  data: { base: "/data/" },
 
   /* ---------- Home page: three big link tiles ---------- */
   tiles: [
@@ -76,24 +82,32 @@ window.SITE = {
     { title: "Voice chat", text: "Proximity voice chat for Java and Bedrock from your browser. Log in with your link from the game.", cta: "Open voice chat", link: "voice", tone: "green" }
   ],
 
-  /* ---------- Home page: what the server has ---------- */
+  /* ---------- Home page: features ----------
+     TO ADD A FEATURE: copy one whole line below (from { to },), paste it under the last one, change the words.
+     TO EDIT: just change the text between the quotes.
+     TO ADD A PICTURE: upload it to the "assets/features" folder on GitHub (Add file > Upload files), then write
+     its path in image, for example image: "/assets/features/claims.png". Use image: "" for no picture.
+     Text can use `code`, **bold** and [link text](https://example.com). */
   features: [
-    { title: "Java + Bedrock", text: "Play from PC, console or phone. Bedrock players join through Geyser and Floodgate with no Java account." },
-    { title: "Proximity voice chat", text: "Talk to players near you in game, through a web client that works on every platform." },
-    { title: "Land claims", text: "Use a Golden Shovel or `/claim` to protect your builds. You earn claim blocks just by playing." },
-    { title: "Teams of 5", text: "Team up with up to four others. Team leaderboards track who is on top." },
-    { title: "Ranked PvP", text: "Elo, tiers and kill streaks are tracked for every player and shown on the leaderboard." },
-    { title: "Diamonds and Roses", text: "Two currencies power the server economy. Both have their own leaderboard." }
+    { title: "Java + Bedrock", text: "Play from PC, console or phone. Everyone plays on the same server.", image: "" },
+    { title: "Proximity voice chat", text: "Talk to players near you in game. Works for Java and Bedrock.", image: "" },
+    { title: "Land claims", text: "Use a Golden Shovel or `/claim` to protect your builds. You earn claim blocks just by playing.", image: "" },
+    { title: "Teams of 5", text: "Team up with up to four others. Team leaderboards track who is on top.", image: "" },
+    { title: "Ranked PvP", text: "Elo, tiers and kill streaks are tracked for every player and shown on the leaderboard.", image: "" },
+    { title: "Diamonds and Roses", text: "Two currencies power the server economy. Both have their own leaderboard.", image: "" }
   ],
 
-  /* ---------- How to Join (one tab per platform) ---------- */
+  /* ---------- How to Join (one sub-tab per entry) ----------
+     steps: a numbered list. copy: boxes with a copy button. links: extra buttons, for example
+     { label: "Console video guide", url: "https://..." }.
+     An entry can use sections (each with its own heading and steps) instead of steps. */
   join: [
     {
       id: "java", label: "Java Edition",
       copy: [{ label: "Server address", value: "{javaHost}" }],
       steps: [
         "Open Minecraft Java Edition and choose **Multiplayer**.",
-        "Click **Add Server** and paste the address below.",
+        "Click **Add Server** and paste the address.",
         "Join on version `{version}`. {versionNote}"
       ]
     },
@@ -101,19 +115,37 @@ window.SITE = {
       id: "bedrock", label: "Bedrock Edition",
       copy: [{ label: "Server address", value: "{bedrockHost}" }, { label: "Port", value: "{bedrockPort}" }],
       steps: [
-        "Open Minecraft Bedrock and go to **Play → Servers → Add Server**.",
-        "Enter any name, then the address and the port below.",
-        "Join. Floodgate signs you in automatically, so you do not need a Java account.",
+        "Open Minecraft Bedrock and go to **Play, Servers, Add Server**.",
+        "Enter any name, then the address and the port.",
+        "Join the server. You do not need a Java account.",
         "Consoles hide the Add Server button, so Xbox, PlayStation and Switch players may need a workaround such as BedrockConnect."
+      ],
+      links: [
+        // { label: "Console video guide", url: "https://youtube.com/..." }
       ]
     },
     {
       id: "voice", label: "Voice chat",
-      copy: [{ label: "Voice website", value: "https://voice.morrowcraft.net" }],
-      steps: [
-        "Join the server, then run `/svg` or `/svg link` in game to get your personal login link.",
-        "Open the link in your browser and allow microphone access.",
-        "Bedrock players can log in with their dot prefix, for example `.Username`, or set a password with `/svg pswd <password>`."
+      copy: [{ label: "Voice website (Bedrock)", value: "https://voice.morrowcraft.net" }],
+      sections: [
+        {
+          heading: "Java Edition",
+          steps: [
+            "Install the [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) mod for your Minecraft version and mod loader (Fabric, Forge, NeoForge or Quilt).",
+            "Join the server with the mod installed.",
+            "Press `V` in game to open the voice chat menu and set up your microphone."
+          ]
+        },
+        {
+          heading: "Bedrock Edition",
+          steps: [
+            "Join the server and type `/svg` in chat. A menu opens in game.",
+            "Click **Set password** and pick your own password. It can be anything, but make sure you remember it.",
+            "On your computer or phone, go to [voice.morrowcraft.net](https://voice.morrowcraft.net).",
+            "Enter your password and your username with a `*` in front of it, for example `*Username`, then connect.",
+            "Keep the website open and the game open at the same time. Voice chat only works while both are running."
+          ]
+        }
       ]
     }
   ],
@@ -247,12 +279,15 @@ window.SITE = {
     ]
   },
 
-  /* ---------- FAQ ---------- */
+  /* ---------- FAQ ----------
+     TO ADD A QUESTION: copy one whole block below (from { to },), paste it under the last one, change q (the
+     question) and a (the answer). Keep the quotes and the comma at the end.
+     Answers can use `code`, **bold**, [link text](https://example.com) and \n for a new line. */
   faq: [
     { q: "How do I join from Bedrock Edition (iOS, Android, Xbox, Switch)?",
-      a: "Add a new server on Bedrock with the address `{bedrockHost}` and port `{bedrockPort}` (the default Bedrock port). Floodgate handles sign-in automatically." },
-    { q: "How does proximity voice chat work?",
-      a: "Run `/svg` or `/svg link` in game to get your instant login link for [voice.morrowcraft.net](https://voice.morrowcraft.net). Bedrock players can log into the web client with their dot prefix (for example `.Username`) or set a password with `/svg pswd <password>`." },
+      a: "Add a new server on Bedrock with the address `{bedrockHost}` and port `{bedrockPort}` (the default Bedrock port). Consoles hide the Add Server button, so see the How to Join page for help." },
+    { q: "How does voice chat work?",
+      a: "Java players install the [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) mod and press `V` in game. Bedrock players type `/svg` in game, click **Set password**, then go to [voice.morrowcraft.net](https://voice.morrowcraft.net) and connect with their password and their username with a `*` in front. The website and the game must both stay open. The How to Join page has every step." },
     { q: "How do I protect my land and builds?",
       a: "Equip a Golden Shovel or run `/claim` at the corners of your area. You earn claim blocks automatically just by playing on the server." },
     { q: "Where can I submit a ban appeal or a support ticket?",

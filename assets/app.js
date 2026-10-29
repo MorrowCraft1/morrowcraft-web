@@ -172,26 +172,36 @@
     document.documentElement.style.setProperty('--' + k.replace(/([a-z])([A-Z0-9])/g, '$1-$2').toLowerCase(), v);
   }
 
-  /* ---------------- header + footer ---------------- */
+  /* ---------------- pages and addresses ----------------
+     Home is "/", every other tab is "/<id>" (for example /join). */
   const ids = S.tabs.map(t => t.id);
-  const go = id => { if (location.hash === '#' + id) show(id); else location.hash = id; };
+  const pathOf = t => t.path || (t.id === ids[0] ? '/' : '/' + t.id);
+  const normPath = p => (p.replace(/\/+$/, '') || '/');
+  const tabAt = p => S.tabs.find(t => pathOf(t) === p);
+  function go(id) {
+    const t = S.tabs.find(x => x.id === id);
+    if (!t) return;
+    if (normPath(location.pathname) !== pathOf(t) || location.hash) history.pushState({}, '', pathOf(t));
+    show(id);
+  }
+  const tabLink = (t, cls, kids) => h('a', {
+    class: cls, href: pathOf(t), 'data-id': t.id,
+    onclick: e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); go(t.id); }
+  }, kids);
 
+  /* ---------------- header + footer ---------------- */
   function buildHeader() {
-    const tabs = h('div', { class: 'tabs', id: 'tabs', role: 'tablist', 'aria-label': 'Pages' },
-      S.tabs.map(t => h('button', {
-        class: 'tab', role: 'tab', type: 'button', id: 'tab-' + t.id,
-        'aria-controls': 'view-' + t.id, 'aria-selected': 'false', onclick: () => go(t.id)
-      }, t.label)));
+    const tabs = h('nav', { class: 'tabs', id: 'tabs', 'aria-label': 'Pages' }, S.tabs.map(t => tabLink(t, 'tab', t.label)));
     const menu = h('button', {
       class: 'menu-btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'tabs',
       onclick: e => e.currentTarget.setAttribute('aria-expanded', String(tabs.classList.toggle('open')))
     }, 'Menu');
-    $('#site-header').append(h('div', { class: 'wrap bar-in' },
-      h('a', { class: 'brand', href: '#' + ids[0] }, h('img', { src: S.logo, alt: '', width: 44, height: 44 }), h('span', {}, S.name)),
+    $('#site-header').append(h('div', { class: 'bar' },
+      tabLink(S.tabs[0], 'brand', h('img', { src: S.logo, alt: S.name, width: 34, height: 34 })),
       tabs,
       h('div', { class: 'bar-cta' },
-        h('a', { class: 'btn btn-green btn-sm', href: S.links.store, target: '_blank', rel: 'noopener' }, 'Store'),
-        h('a', { class: 'btn btn-ghost btn-sm', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Discord')),
+        h('a', { class: 'pill-btn pill-green', href: S.links.store, target: '_blank', rel: 'noopener' }, 'Store'),
+        h('a', { class: 'pill-btn pill-dark', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Discord')),
       menu));
   }
 
@@ -217,15 +227,13 @@
     const pill = h('span', { class: 'pill' }, 'Checking');
     const count = h('div', { class: 'status-count' }, '–');
     const meta = h('div', { class: 'status-meta' }, '');
-    const heads = h('div', { class: 'heads' });
-    const card = h('div', { class: 'card status' },
-      h('div', { class: 'status-top' }, h('span', { class: 'label' }, 'Live server status'), pill),
-      count, meta, heads);
+    const card = h('div', { class: 'card panel' },
+      h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Server status'), pill),
+      count, meta);
 
     function paint(s) {
-      heads.replaceChildren();
       if (!s) {
-        pill.className = 'pill'; pill.textContent = 'Status unavailable';
+        pill.className = 'pill'; pill.textContent = 'Unavailable';
         count.textContent = '–'; meta.textContent = 'Could not reach the status service.';
         return;
       }
@@ -235,13 +243,8 @@
         return;
       }
       pill.className = 'pill on'; pill.textContent = 'Online';
-      count.replaceChildren(String(s.players ?? 0), h('small', {}, ' / ' + (s.max ?? '?') + ' players'));
+      count.replaceChildren(String(s.players ?? 0), h('small', {}, '/ ' + (s.max ?? '?') + ' players'));
       meta.textContent = [s.version, s.motd].filter(Boolean).join(' · ');
-      (s.list || []).slice(0, 14).forEach(p => {
-        const img = head(p.uuid, p.name);
-        img.title = p.name;
-        heads.append(img);
-      });
     }
 
     async function refresh() {
@@ -250,16 +253,14 @@
         const r = await fetchJSON('https://api.mcstatus.io/v2/status/java/' + host);
         return paint({
           online: r.online, players: r.players && r.players.online, max: r.players && r.players.max,
-          version: r.version && r.version.name_clean, motd: r.motd && r.motd.clean,
-          list: ((r.players && r.players.list) || []).map(p => ({ name: p.name_clean || p.name_raw, uuid: p.uuid }))
+          version: r.version && r.version.name_clean, motd: r.motd && r.motd.clean
         });
       } catch { /* try the second service */ }
       try {
         const r = await fetchJSON('https://api.mcsrvstat.us/3/' + host);
         return paint({
           online: r.online, players: r.players && r.players.online, max: r.players && r.players.max,
-          version: r.version, motd: r.motd && r.motd.clean && r.motd.clean.join(' '),
-          list: ((r.players && r.players.list) || []).map(p => ({ name: p.name, uuid: p.uuid }))
+          version: r.version, motd: r.motd && r.motd.clean && r.motd.clean.join(' ')
         });
       } catch { paint(null); }
     }
@@ -273,43 +274,51 @@
     const [a, b] = S.name.replace(/(.)([A-Z])/, '$1\u0000$2').split('\u0000');
     const addr = (cls, k, host, port) => h('div', { class: 'addr-row ' + cls },
       h('span', { class: 'label k' }, k),
-      h('span', { class: 'v' }, host, port ? h('span', { class: 'label', style: 'margin-left:10px' }, 'port ' + port) : null),
+      h('span', { class: 'v' }, host, port ? h('span', { class: 'port' }, 'port ' + port) : null),
       copyBtn(host, k + ' address'));
     v.append(
-      h('div', { class: 'hero' },
-        h('div', {},
-          h('div', { class: 'eyebrow label' }, S.tagline),
-          h('h1', { class: 'display' }, h('span', {}, a), b ? h('span', {}, b) : null),
-          h('p', { class: 'intro' }, S.intro),
+      h('section', { class: 'hero' },
+        h('div', { class: 'logo-frame' }, h('img', { src: S.logo, alt: S.name + ' logo', width: 200, height: 200 })),
+        h('h1', { class: 'wordmark' }, h('span', { class: 'wm wm-a' }, a), b ? h('span', { class: 'wm wm-b' }, b) : null),
+        h('p', { class: 'intro' }, S.intro),
+        h('div', { class: 'hero-actions' },
+          h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
+          h('a', { class: 'btn btn-red', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
+      h('div', { class: 'connect' },
+        h('div', { class: 'card panel' },
+          h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Connect')),
           h('div', { class: 'addr' },
             addr('java', 'Java', S.server.javaHost),
             addr('bedrock', 'Bedrock', S.server.bedrockHost, S.server.bedrockPort)),
-          h('p', { class: 'label', style: 'margin:12px 0 0' }, 'Java version ' + S.server.version),
-          h('div', { class: 'hero-actions' },
-            h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
-            h('a', { class: 'btn btn-red', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
-        h('div', { class: 'hero-art' },
-          h('img', { class: 'logo', src: S.logo, alt: S.name + ' logo', width: 340, height: 340 }),
-          buildStatus())),
+          h('p', { class: 'label foot-note' }, 'Java version ' + S.server.version)),
+        buildStatus()),
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
         h('a', { class: 'btn ' + (t.tone === 'red' ? 'btn-red' : 'btn-green'), href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
-      h('div', { class: 'features' },
-        h('h2', { class: 'display' }, 'What you get'),
-        h('div', { class: 'feat-grid' }, S.features.map(f =>
-          h('div', { class: 'feat' }, h('h3', {}, f.title), mdEl('p', f.text))))));
+      h('h2', { class: 'display section-title' }, 'Features'),
+      h('div', { class: 'feat-grid' }, S.features.map(f =>
+        h('article', { class: 'card feat' },
+          f.image ? h('img', { src: f.image, alt: '', loading: 'lazy' }) : null,
+          h('div', { class: 'feat-body' }, h('h3', {}, f.title), mdEl('p', f.text))))));
   };
 
   builders.join = () => {
     const v = $('#view-join');
     const panel = h('div', { class: 'card join-panel' });
     v.append(viewHead('How to join', 'Pick your platform. It takes about a minute.'));
+    const steps = list => h('ol', { class: 'steps' }, (list || []).map(s => h('li', {}, mdEl('div', tpl(s)))));
     const tabs = subTabs(S.join.map(j => ({ id: j.id, label: j.label })), id => {
       const j = S.join.find(x => x.id === id);
       panel.replaceChildren(
-        h('ol', { class: 'steps' }, j.steps.map(s => mdEl('li', tpl(s)))),
-        h('div', { class: 'copy-list' }, j.copy.map(c => {
+        h('div', { class: 'join-steps' },
+          j.sections
+            ? j.sections.map(sec => h('div', { class: 'join-sec' }, h('h3', {}, sec.heading), steps(sec.steps)))
+            : steps(j.steps),
+          j.links && j.links.length
+            ? h('div', { class: 'join-links' }, j.links.map(l => h('a', { class: 'btn btn-red', href: l.url, target: '_blank', rel: 'noopener' }, l.label)))
+            : null),
+        h('div', { class: 'copy-list' }, (j.copy || []).map(c => {
           const val = tpl(c.value);
           return h('div', { class: 'copy-box' },
             h('div', { style: 'flex:1;min-width:0' }, h('span', { class: 'label l' }, c.label), h('span', { class: 'v' }, val)),
@@ -317,7 +326,8 @@
         })));
     }, 'Platform');
     v.append(tabs.el, panel);
-    tabs.pick(S.join[0].id);
+    const wanted = location.hash.slice(1);
+    tabs.pick(S.join.some(j => j.id === wanted) ? wanted : S.join[0].id);
   };
 
   function postEl(it) {
@@ -500,24 +510,38 @@
   /* ---------------- router ---------------- */
   const loaded = {};
   function show(id) {
-    if (!ids.includes(id)) id = ids[0];
-    const tab = S.tabs.find(t => t.id === id);
-    S.tabs.forEach(t => {
-      $('#view-' + t.id).hidden = t.id !== id;
-      $('#tab-' + t.id).setAttribute('aria-selected', String(t.id === id));
+    const tab = S.tabs.find(t => t.id === id) || S.tabs[0];
+    id = tab.id;
+    S.tabs.forEach(t => { $('#view-' + t.id).hidden = t.id !== id; });
+    document.querySelectorAll('#tabs .tab').forEach(a => {
+      if (a.dataset.id === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     $('#tabs').classList.remove('open');
+    const mb = $('.menu-btn'); if (mb) mb.setAttribute('aria-expanded', 'false');
     if (!loaded[id]) { loaded[id] = true; if (builders[id]) builders[id](); }
-    document.title = id === ids[0] ? S.name + ' | Cross-Play Minecraft SMP' : tab.label + ' | ' + S.name;
+    document.title = S.name + ' | ' + tab.label;
     window.scrollTo(0, 0);
+  }
+
+  /* Works out which tab the address bar points at. Old "/#join" style links are moved to "/join". */
+  function idFromLocation() {
+    const hash = location.hash.slice(1);
+    if (ids.includes(hash)) {
+      history.replaceState({}, '', pathOf(S.tabs.find(t => t.id === hash)));
+      return hash;
+    }
+    const t = tabAt(normPath(location.pathname));
+    if (t) return t.id;
+    history.replaceState({}, '', pathOf(S.tabs[0]));
+    return ids[0];
   }
 
   buildHeader();
   buildFooter();
   const app = $('#app');
   S.tabs.forEach(t => app.append(h('section', {
-    class: 'view wrap', id: 'view-' + t.id, role: 'tabpanel', 'aria-labelledby': 'tab-' + t.id, hidden: true
+    class: 'view wrap', id: 'view-' + t.id, hidden: true
   })));
-  addEventListener('hashchange', () => show(location.hash.slice(1)));
-  show(location.hash.slice(1));
+  addEventListener('popstate', () => show(idFromLocation()));
+  show(idFromLocation());
 })();
