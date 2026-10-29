@@ -23,8 +23,8 @@ async function refresh() {
   // --- staff + leaderboard (database) ---
   let lpPool, zlbPool;
   try {
-    zlbPool = makePool(env('ZLB_DB_NAME', 'zleaderboard'));
-    lpPool = makePool(env('LP_DB_NAME', 'luckperms'));
+    zlbPool = makePool('ZLB', env('ZLB_DB_NAME', 'zleaderboard'));
+    lpPool = makePool('LP', env('LP_DB_NAME', 'luckperms'));
     try {
       const staff = await fixNames(await fetchStaff(site, lpPool), zlbPool);
       files['staff.json'] = { updated: now, ranks: staff };

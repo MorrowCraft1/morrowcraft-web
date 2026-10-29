@@ -46,7 +46,27 @@ The bot you already have needs:
 
 Never paste the bot token into chat, into `site.config.js` or into the repo. It only goes in `service/.env`.
 
-## 4. Run the data service
+## 3b. Automatic refresh with GitHub Actions (recommended)
+
+The file `.github/workflows/refresh-data.yml` runs the data service on GitHub every 15 minutes, for free, so nothing has to stay switched on at home. It needs these **secrets**: GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
+
+| Secret | Value |
+|---|---|
+| `DB_HOST` | `fsn-261018.bloom.host` (no port) |
+| `ZLB_DB_NAME` | the leaderboard database name |
+| `ZLB_DB_USER` | its username |
+| `ZLB_DB_PASS` | its password |
+| `LP_DB_NAME` | the LuckPerms database name |
+| `LP_DB_USER` | its username |
+| `LP_DB_PASS` | its password |
+| `DISCORD_BOT_TOKEN` | your bot token |
+| `ANTHROPIC_API_KEY` | optional, for news summaries |
+
+Then open the **Actions** tab, choose **Refresh website data**, and click **Run workflow** to test it. The log shows one line per source. You do not need to create a GitHub token, because the job uses the one GitHub provides.
+
+The database must allow connections from outside (BloomHost: "Allowed connections from" = `%`). GitHub's servers have changing addresses, so it cannot be limited to one address. Use strong, unique database passwords.
+
+## 4. Run the data service yourself (alternative)
 
 It needs Node.js 20 or newer and an always-on place to run.
 

@@ -1,0 +1,57 @@
+# Refreshes the website's staff roster, leaderboard, news, updates and events.
+# Runs every 15 minutes (GitHub may delay a run by a few minutes) and can be started by hand
+# from the Actions tab. It commits changed files in data/ to main, and Cloudflare redeploys the site.
+# Passwords and tokens come from the repo's Secrets, never from files in the repo.
+name: Refresh website data
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Remember AI summaries between runs
+        uses: actions/cache@v4
+        with:
+          path: service/.cache
+          key: summaries-${{ github.run_id }}
+          restore-keys: summaries-
+
+      - name: Install
+        working-directory: service
+        run: npm install --omit=dev --no-audit --no-fund
+
+      - name: Refresh data
+        working-directory: service
+        run: node index.js --once
+        env:
+          PUBLISH_MODE: github
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          ZLB_DB_NAME: ${{ secrets.ZLB_DB_NAME }}
+          ZLB_DB_USER: ${{ secrets.ZLB_DB_USER }}
+          ZLB_DB_PASS: ${{ secrets.ZLB_DB_PASS }}
+          LP_DB_NAME: ${{ secrets.LP_DB_NAME }}
+          LP_DB_USER: ${{ secrets.LP_DB_USER }}
+          LP_DB_PASS: ${{ secrets.LP_DB_PASS }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

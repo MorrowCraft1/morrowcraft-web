@@ -1,12 +1,15 @@
 import mysql from 'mysql2/promise';
 import { env, safeIdent } from './config.js';
 
-export function makePool(database) {
+/** One connection pool per database. BloomHost gives every database its own login, so each can have its own settings:
+ *  ZLB_DB_HOST / ZLB_DB_USER / ZLB_DB_PASS  and  LP_DB_HOST / LP_DB_USER / LP_DB_PASS
+ *  Anything not set falls back to the shared DB_HOST / DB_PORT / DB_USER / DB_PASS. */
+export function makePool(prefix, database) {
   return mysql.createPool({
-    host: env('DB_HOST', 'localhost'),
-    port: Number(env('DB_PORT', '3306')),
-    user: env('DB_USER'),
-    password: env('DB_PASS'),
+    host: env(`${prefix}_DB_HOST`, env('DB_HOST', 'localhost')),
+    port: Number(env(`${prefix}_DB_PORT`, env('DB_PORT', '3306'))),
+    user: env(`${prefix}_DB_USER`, env('DB_USER')),
+    password: env(`${prefix}_DB_PASS`, env('DB_PASS')),
     database,
     connectionLimit: 2,
     connectTimeout: 10000
