@@ -126,7 +126,7 @@ window.SITE = {
     applyText: "Want to join the team? Applications are handled in our Discord.",
     tierTitles: { owner: "Owner", high: "High Staff", team: "Staff Team" },
     ranks: [
-      { key: "owner",           label: "Owner",             tier: "owner", color: "#e90c09" },
+      { key: "owner",           label: "Owner",             tier: "owner", color: "#e90c09", only: ["zMorrow"] },   // only: show just these names
       { key: "manager",         label: "Manager",           tier: "high",  color: "#ffe14d" },
       { key: "trial-manager",   label: "Trial Manager",     tier: "high",  color: "#c9bd4a" },
       { key: "develepor",       label: "Developer",         tier: "high",  color: "#a24bff" },

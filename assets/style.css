@@ -304,3 +304,7 @@ footer { margin-top: auto; border-top: 3px solid transparent; border-image: line
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
 }
+
+.emoji { display: inline-block; vertical-align: -4px; width: 20px; height: 20px; margin: 0 2px; }
+.tbd { display: inline-flex; align-items: center; color: var(--muted); font-weight: 600; letter-spacing: .14em; border: 1px dashed var(--line); border-radius: 8px; padding: 8px 16px; }
+.post-top .by { color: var(--muted); font-weight: 500; font-size: .8rem; }

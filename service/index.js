@@ -18,6 +18,7 @@ async function refresh() {
   const site = loadSite();
   const now = new Date().toISOString();
   const files = {};
+  const sources = {};   // what worked, for data/status.json (counts and codes only, never secrets)
   console.log(`[${now}] refreshing…`);
 
   // --- staff + leaderboard (database) ---
@@ -28,13 +29,15 @@ async function refresh() {
     try {
       const staff = await fixNames(await fetchStaff(site, lpPool), zlbPool);
       files['staff.json'] = { updated: now, ranks: staff };
-      console.log(`  staff: ${Object.values(staff).flat().length} people`);
-    } catch (e) { console.warn('  staff failed:', e.message); }
+      sources.staff = { ok: true, count: Object.values(staff).flat().length };
+      console.log(`  staff: ${sources.staff.count} people`);
+    } catch (e) { sources.staff = { ok: false, code: e.code || 'error' }; console.warn('  staff failed:', e.message); }
     try {
       const categories = await fetchLeaderboard(site, zlbPool);
       files['leaderboard.json'] = { updated: now, categories };
-      console.log(`  leaderboard: ${Object.keys(categories).length} categories`);
-    } catch (e) { console.warn('  leaderboard failed:', e.message); }
+      sources.leaderboard = { ok: true, count: Object.keys(categories).length };
+      console.log(`  leaderboard: ${sources.leaderboard.count} categories`);
+    } catch (e) { sources.leaderboard = { ok: false, code: e.code || 'error' }; console.warn('  leaderboard failed:', e.message); }
   } finally {
     await Promise.allSettled([lpPool && lpPool.end(), zlbPool && zlbPool.end()]);
   }
@@ -46,15 +49,19 @@ async function refresh() {
   } else {
     for (const [key, feed] of Object.entries(site.discord.feeds)) {
       try {
-        let items = await fetchFeed(feed.channelId, feed.limit || 8, token);
+        const got = await fetchFeed(feed.channelId, feed.limit || 8, token);
+        let items = got.items;
+        sources[key] = { ok: true, count: items.length, discordReturned: got.raw, messageTypes: got.types, channelType: got.channelType };
         if (site.discord.aiSummaries && site.discord.aiSummaries.enabled) {
           items = await addSummaries(items, site.discord.aiSummaries.minLength || 280);
         }
         files[`${key}.json`] = { updated: now, items };
         console.log(`  ${key}: ${items.length} posts`);
-      } catch (e) { console.warn(`  ${key} failed:`, e.message); }
+      } catch (e) { sources[key] = { ok: false, error: String(e.message).slice(0, 60).replace(/ for \/channels.*/, '') }; console.warn(`  ${key} failed:`, e.message); }
     }
   }
+
+  files['status.json'] = { updated: now, sources };
 
   // Only publish what succeeded, so one broken source never wipes the others.
   if (Object.keys(files).length) await publish(files);

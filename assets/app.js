@@ -30,6 +30,7 @@
   function md(src) {
     return esc(src == null ? '' : src)
       .replace(/\{\{t:(\d+)\}\}/g, (m, t) => esc(fmtDate(Number(t) * 1000)))
+      .replace(/\{\{e:(\d+)\}\}/g, '<img class="emoji" src="https://cdn.discordapp.com/emojis/$1.png?size=48" alt="" width="20" height="20" loading="lazy">')
       .replace(/`([^`\n]+)`/g, '<code>$1</code>')
       .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
@@ -320,7 +321,7 @@
     card.append(h('div', { class: 'post-top' },
       a.avatar ? h('img', { class: 'avatar', src: a.avatar, alt: '', width: 34, height: 34, loading: 'lazy' })
         : h('div', { class: 'avatar' }, (a.name || '?').slice(0, 1).toUpperCase()),
-      h('span', { class: 'who' }, a.name || 'MorrowCraft'),
+      h('span', { class: 'who' }, h('small', { class: 'by' }, 'Posted by '), a.name || 'MorrowCraft'),
       h('span', { class: 'when', title: it.ts ? fmtDate(new Date(it.ts).getTime()) : '' }, it.ts ? timeAgo(it.ts) : '')));
     const text = it.text || '';
     if (it.summary) {
@@ -436,19 +437,21 @@
     out.push(h('div', { class: 'card apply', style: 'margin-bottom:30px' },
       h('p', {}, S.staff.applyText),
       h('a', { class: 'btn btn-red', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
-    let any = false;
     for (const tier of ['owner', 'high', 'team']) {
-      const rows = S.staff.ranks.filter(r => r.tier === tier)
-        .map(r => ({ r, m: data.ranks[r.key] || [] })).filter(x => x.m.length);
+      const rows = S.staff.ranks.filter(r => r.tier === tier).map(r => {
+        let m = data.ranks[r.key] || [];
+        if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }
+        return { r, m };
+      });
       if (!rows.length) continue;
-      any = true;
       out.push(h('section', { class: 'tier' + (tier === 'owner' ? ' owner-card' : '') },
         h('h2', { class: 'display' }, S.staff.tierTitles[tier]),
         rows.map(({ r, m }) => h('div', { class: 'rank-row' },
-          h('div', { class: 'rank-name', style: '--c:' + r.color }, h('i'), r.label, h('small', {}, '· ' + m.length)),
-          h('div', { class: 'members' }, m.map(p => h('div', { class: 'member' }, head(p.u, p.n), h('b', {}, p.n))))))));
+          h('div', { class: 'rank-name', style: '--c:' + r.color }, h('i'), r.label, m.length ? h('small', {}, '· ' + m.length) : null),
+          h('div', { class: 'members' }, m.length
+            ? m.map(p => h('div', { class: 'member' }, head(p.u, p.n), h('b', {}, p.n)))
+            : h('span', { class: 'tbd' }, 'TBD'))))));
     }
-    if (!any) out.push(h('p', { class: 'empty card' }, 'No staff found yet.'));
     out.push(updatedLabel(data));
     body.replaceChildren(...out.filter(Boolean));
   };
