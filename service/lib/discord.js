@@ -48,6 +48,20 @@ function embedText(m) {
   }).filter(Boolean).join('\n\n');
 }
 
+/** Newer Discord "component" cards (containers, text displays, media galleries, sections) hold their text
+ *  and pictures in m.components instead of content/embeds. Walk the whole tree. */
+function walkComponents(list, out = { text: [], images: [] }) {
+  for (const c of list || []) {
+    if (!c || typeof c !== 'object') continue;
+    if (c.type === 10 && c.content) out.text.push(c.content);                         // text display
+    if (c.type === 12) for (const it of c.items || []) if (it.media && it.media.url) out.images.push(it.media.url); // media gallery
+    if (c.type === 11 && c.media && c.media.url) out.images.push(c.media.url);        // thumbnail
+    if (c.type === 9) walkComponents(c.components, out), c.accessory && walkComponents([c.accessory], out); // section
+    if (c.type === 17 || c.type === 1) walkComponents(c.components, out);             // container / action row
+  }
+  return out;
+}
+
 /** Latest messages from one channel, newest first. Also returns what Discord sent back, for the status file. */
 export async function fetchFeed(channelId, limit, token) {
   const [channel, messages] = await Promise.all([
@@ -59,7 +73,8 @@ export async function fetchFeed(channelId, limit, token) {
   const items = messages
     .filter(m => [0, 19, 20].includes(m.type))
     .map(m => {
-      const text = [clean(m.content, m), embedText(m)].filter(Boolean).join('\n\n');
+      const comp = walkComponents(m.components);
+      const text = [clean(m.content, m), embedText(m), comp.text.map(t => clean(t, m)).join('\n\n')].filter(Boolean).join('\n\n');
       const a = m.author || {};
       return {
         id: m.id,
@@ -69,7 +84,7 @@ export async function fetchFeed(channelId, limit, token) {
           avatar: a.avatar ? `https://cdn.discordapp.com/avatars/${a.id}/${a.avatar}.png?size=64` : null
         },
         text,
-        image: firstImage(m),
+        image: firstImage(m) || comp.images[0] || null,
         url: guild ? `https://discord.com/channels/${guild}/${channelId}/${m.id}` : null
       };
     })

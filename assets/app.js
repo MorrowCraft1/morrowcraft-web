@@ -52,6 +52,11 @@
     for (const raw of String(src || '').split('\n')) {
       const line = raw.trimEnd();
       let m;
+      if ((m = line.match(/^-#\s+(.*)$/))) {          // Discord "subtext" line
+        list = null;
+        const n = h('p', { class: 'sub' }); n.innerHTML = inlineDiscord(m[1]); root.append(n);
+        continue;
+      }
       if ((m = line.match(/^\s*[*-]\s+(.*)$/))) {
         if (!list) { list = h('ul', {}); root.append(list); }
         const li = h('li', {}); li.innerHTML = inlineDiscord(m[1]); list.append(li);
