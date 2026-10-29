@@ -17,12 +17,16 @@ async function dget(path, token, retried = false) {
 function clean(content, message) {
   const users = new Map((message.mentions || []).map(u => [u.id, u.global_name || u.username]));
   return String(content || '')
+    .replace(/<@&\d+>/g, '')                 // role pings mean nothing on a website
+    .replace(/@(everyone|here)\b/g, '')
     .replace(/<@!?(\d+)>/g, (m, id) => '@' + (users.get(id) || 'user'))
-    .replace(/<@&\d+>/g, '@role')
     .replace(/<#\d+>/g, '#channel')
     .replace(/<a?:(\w+):\d+>/g, ':$1:')
     .replace(/<t:(\d+)(?::[A-Za-z])?>/g, '{{t:$1}}')
-    .replace(/@(everyone|here)/g, '@$1')
+    .replace(/\|\|\s*\|\|/g, '')             // empty spoilers left behind by removed pings
+    .replace(/\(\s*\)/g, '')                   // and empty brackets around them
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 

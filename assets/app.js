@@ -36,6 +36,45 @@
       .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>')
       .replace(/\n/g, '<br>');
   }
+  /* Discord-style text: headings, bullets, **bold**, __underline__, *italic*, ~~strike~~, ||spoilers||. */
+  function inlineDiscord(line) {
+    return md(line)
+      .replace(/\|\|([^|]+)\|\|/g, '$1')
+      .replace(/__([^_\n]+)__/g, '<u>$1</u>')
+      .replace(/~~([^~\n]+)~~/g, '<s>$1</s>')
+      .replace(/(^|[\s(>])\*([^*\n]+)\*(?=[\s).,!?<]|$)/g, '$1<em>$2</em>')
+      .replace(/(^|[\s(>])_([^_\n]+)_(?=[\s).,!?<]|$)/g, '$1<em>$2</em>');
+  }
+  function discordEl(src, cls) {
+    const root = h('div', { class: 'dm ' + (cls || '') });
+    let list = null;
+    for (const raw of String(src || '').split('\n')) {
+      const line = raw.trimEnd();
+      let m;
+      if ((m = line.match(/^\s*[*-]\s+(.*)$/))) {
+        if (!list) { list = h('ul', {}); root.append(list); }
+        const li = h('li', {}); li.innerHTML = inlineDiscord(m[1]); list.append(li);
+        continue;
+      }
+      list = null;
+      if (!line.trim()) continue;
+      const hd = line.match(/^(#{1,3})\s+(.*)$/);
+      const n = h(hd ? 'h4' : 'p', {});
+      n.innerHTML = inlineDiscord(hd ? hd[2] : line);
+      root.append(n);
+    }
+    return root;
+  }
+  /* A short preview that ends on a whole line, so formatting is never cut in half. */
+  function previewOf(text, max = 300) {
+    const out = [];
+    let len = 0;
+    for (const line of text.split('\n')) {
+      if (len > 0 && len + line.length > max) break;
+      out.push(line); len += line.length + 1;
+    }
+    return out.join('\n').trim();
+  }
   const mdEl = (tag, src, cls) => { const n = h(tag, { class: cls }); n.innerHTML = md(src); return n; };
   const tpl = s => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in S.server ? String(S.server[k]) : m));
 
@@ -286,12 +325,12 @@
     const text = it.text || '';
     if (it.summary) {
       card.append(h('span', { class: 'ai' }, 'Summary'), mdEl('p', it.summary));
-      if (text) card.append(h('details', {}, h('summary', {}, 'Read the full message'), mdEl('div', text)));
+      if (text) card.append(h('details', {}, h('summary', {}, 'Read the full message'), discordEl(text)));
     } else if (text.length > 360) {
-      card.append(mdEl('p', text.slice(0, 320).trimEnd() + '…'),
-        h('details', {}, h('summary', {}, 'Read the full message'), mdEl('div', text)));
+      const pv = previewOf(text);
+      card.append(discordEl(pv), h('details', {}, h('summary', {}, 'Read the full message'), discordEl(text)));
     } else if (text) {
-      card.append(mdEl('p', text));
+      card.append(discordEl(text));
     }
     if (it.image) card.append(h('img', { class: 'pic', src: it.image, alt: '', loading: 'lazy' }));
     if (it.url) card.append(h('a', { class: 'open', href: it.url, target: '_blank', rel: 'noopener' }, 'Open in Discord'));

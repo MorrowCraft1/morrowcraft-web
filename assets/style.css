@@ -182,6 +182,9 @@ code {
 .post-top .when { color: var(--muted); font-size: .85rem; margin-left: auto; white-space: nowrap; }
 .post p { margin: 0; overflow-wrap: anywhere; }
 .post .ai { display: inline-block; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--green); border: 1px solid color-mix(in srgb, var(--green) 40%, var(--line)); border-radius: 4px; padding: 1px 6px; margin-bottom: 6px; }
+.dm p { margin: 0 0 .5em; } .dm h4 { margin: .2em 0 .5em; font-size: 1.15rem; color: #fff; }
+.dm ul { margin: 0 0 .6em; padding-left: 1.3em; } .dm li { margin: .15em 0; }
+.dm > :last-child { margin-bottom: 0; }
 .post details { margin-top: 10px; }
 .post summary { cursor: pointer; color: var(--green); font-weight: 600; font-size: .9rem; }
 .post details > div { margin-top: 8px; color: #cdd5f0; overflow-wrap: anywhere; }
