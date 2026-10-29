@@ -151,25 +151,35 @@ window.SITE = {
   ],
 
   /* ---------- Staff roster ----------
-     key  = exact LuckPerms group name. Order here = rank order (top = highest).
-     tier = which block of the roster the rank appears in: owner / high / team.
-     A player is shown once, under their highest rank. */
+     ranks: key = the exact LuckPerms group name, label = what the website shows. The order here is the
+     rank order (top = highest): someone in two groups is listed once, under the higher one.
+     only: ["Name"] shows just those names for that rank (used for the Owner).
+     sections: how the Staff page is laid out. Each section has a title and either ranks (a list of keys)
+     or groups (small headings, each with its own ranks). A rank with nobody in it shows TBD. */
   staff: {
     applyText: "Want to join the team? Applications are handled in our Discord.",
-    tierTitles: { owner: "Owner", high: "High Staff", team: "Staff Team" },
     ranks: [
-      { key: "owner",           label: "Owner",             tier: "owner", color: "#e90c09", only: ["zMorrow"] },   // only: show just these names
-      { key: "manager",         label: "Manager",           tier: "high",  color: "#ffe14d" },
-      { key: "trial-manager",   label: "Trial Manager",     tier: "high",  color: "#c9bd4a" },
-      { key: "develepor",       label: "Developer",         tier: "high",  color: "#a24bff" },
-      { key: "trial-developer", label: "Trial Developer",   tier: "high",  color: "#b98cf0" },
-      { key: "head-staff",      label: "Head Staff",        tier: "high",  color: "#ff6a00" },
-      { key: "sr-admin",        label: "Senior Admin",      tier: "high",  color: "#ff8a1f" },
-      { key: "admin",           label: "Admin",             tier: "high",  color: "#ffab00" },
-      { key: "sr-mod",          label: "Senior Moderator",  tier: "team",  color: "#1f8fe0" },
-      { key: "moderator",       label: "Moderator",         tier: "team",  color: "#2bb3ff" },
-      { key: "jr-mod",          label: "Junior Moderator",  tier: "team",  color: "#3fd0ff" },
-      { key: "trainee",         label: "Trainee",           tier: "team",  color: "#7cf0ff" }
+      { key: "owner",           label: "Owner",             color: "#e90c09", only: ["zMorrow"] },
+      { key: "manager",         label: "Staff Manager",     color: "#ffe14d" },
+      { key: "trial-manager",   label: "Trial Manager",     color: "#c9bd4a" },
+      { key: "develepor",       label: "Developer",         color: "#a24bff" },   // spelled this way in LuckPerms
+      { key: "trial-developer", label: "Trial Developer",   color: "#b98cf0" },
+      { key: "head-staff",      label: "Head Staff",        color: "#ff6a00" },
+      { key: "sr-admin",        label: "Senior Admin",      color: "#ff8a1f" },
+      { key: "admin",           label: "Admin",             color: "#ffab00" },
+      { key: "sr-mod",          label: "Senior Moderator",  color: "#1f8fe0" },
+      { key: "moderator",       label: "Moderator",         color: "#2bb3ff" },
+      { key: "jr-mod",          label: "Junior Moderator",  color: "#3fd0ff" },
+      { key: "trainee",         label: "Trainee",           color: "#7cf0ff" }
+    ],
+    sections: [
+      { title: "Owner", style: "owner", ranks: ["owner"] },
+      { title: "Operations", groups: [
+        { title: "Management",  ranks: ["manager", "trial-manager"] },
+        { title: "Development", ranks: ["develepor", "trial-developer"] }
+      ] },
+      { title: "Administration", ranks: ["head-staff", "sr-admin", "admin"] },
+      { title: "Moderation", ranks: ["sr-mod", "moderator", "jr-mod", "trainee"] }
     ]
   },
 

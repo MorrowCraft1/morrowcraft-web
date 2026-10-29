@@ -452,22 +452,24 @@
     out.push(h('div', { class: 'card apply', style: 'margin-bottom:30px' },
       h('p', {}, S.staff.applyText),
       h('a', { class: 'btn btn-red', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
-    for (const tier of ['owner', 'high', 'team']) {
-      const rows = S.staff.ranks.filter(r => r.tier === tier).map(r => {
-        let m = data.ranks[r.key] || [];
-        if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }
-        return { r, m };
-      });
-      if (!rows.length) continue;
-      out.push(h('section', { class: 'tier' + (tier === 'owner' ? ' owner-card' : '') },
-        h('h2', { class: 'display' }, S.staff.tierTitles[tier]),
-        rows.map(({ r, m }) => h('div', { class: 'rank-row' },
-          h('div', { class: 'rank-name', style: '--c:' + r.color }, h('i'), r.label, m.length ? h('small', {}, '· ' + m.length) : null),
-          h('div', { class: 'members' }, m.length
-            ? m.map(p => h('div', { class: 'member' }, head(p.u, p.n), h('b', {}, p.n)))
-            : h('span', { class: 'tbd' }, 'TBD'))))));
+    const rowFor = key => {
+      const r = S.staff.ranks.find(x => x.key === key);
+      if (!r) return null;
+      let m = data.ranks[r.key] || [];
+      if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }
+      return h('div', { class: 'rank-row' },
+        h('div', { class: 'rank-name', style: '--c:' + r.color }, h('i'), r.label, m.length ? h('small', {}, '· ' + m.length) : null),
+        h('div', { class: 'members' }, m.length
+          ? m.map(p => h('div', { class: 'member' }, head(p.u, p.n), h('b', {}, p.n)))
+          : h('span', { class: 'tbd' }, 'TBD')));
+    };
+    for (const sec of S.staff.sections) {
+      out.push(h('section', { class: 'tier' + (sec.style === 'owner' ? ' owner-card' : '') },
+        h('h2', { class: 'display' }, sec.title),
+        sec.groups
+          ? sec.groups.map(g => h('div', { class: 'group' }, h('h3', { class: 'group-title' }, g.title), g.ranks.map(rowFor)))
+          : (sec.ranks || []).map(rowFor)));
     }
-    out.push(updatedLabel(data));
     body.replaceChildren(...out.filter(Boolean));
   };
 
