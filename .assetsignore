@@ -1,0 +1,6 @@
+# Files that are not part of the public website (used by Cloudflare Workers static assets).
+service
+.github
+SETUP.md
+.assetsignore
+wrangler.jsonc

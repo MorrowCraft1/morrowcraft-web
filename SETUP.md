@@ -123,7 +123,7 @@ Everything you can change is in **`site.config.js`**. To edit it on GitHub: open
 - **Add a picture to a feature:** on GitHub open the `assets` folder, then `features` (create it with **Add file, Create new file** and a name like `features/readme.txt` if it does not exist). Click **Add file, Upload files**, upload your image and commit. Then set `image: "/assets/features/yourfile.png"` on that feature.
 - **Add a console video link on the Bedrock page:** find the `links: [` line inside the Bedrock entry and add `{ label: "Console video guide", url: "https://..." }`.
 
-Page addresses: Home is `morrowcraft.net`. The others are `morrowcraft.net/join`, `/news`, `/leaderboard`, `/staff`, `/rules` and `/faq`. This relies on Cloudflare Pages treating the site as a single-page app, which it does when the project has **no `404.html` file**. Do not add one.
+Page addresses: Home is `morrowcraft.net`. The others are `morrowcraft.net/join`, `/news`, `/leaderboard`, `/staff`, `/rules` and `/faq`. Each address has a small file of its own in the repo (`join.html`, `staff.html` and so on, copies of `index.html`), so reloading or sharing a link works on Cloudflare without any extra settings. If you add a new tab in `site.config.js`, also copy `index.html` to `<id>.html` (open `index.html`, copy everything, then create the new file with Add file, Create new file).
 
 ## 6. Security checklist
 
