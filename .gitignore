@@ -1,0 +1,6 @@
+# Secrets and local files. Never commit these.
+service/.env
+service/.cache/
+service/node_modules/
+node_modules/
+.DS_Store

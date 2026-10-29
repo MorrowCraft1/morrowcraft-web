@@ -1,0 +1,110 @@
+{
+ "sample": true,
+ "updated": "2026-10-29T03:10:37.058Z",
+ "ranks": {
+  "owner": [
+   {
+    "u": "0e43b85c-c8aa-4d35-8bb0-a7ec18eba9ee",
+    "n": "PixelPixel85"
+   }
+  ],
+  "manager": [
+   {
+    "u": "52464e8b-e048-4863-8e05-5ae826456589",
+    "n": "QuartzAxiom51"
+   }
+  ],
+  "trial-manager": [
+   {
+    "u": "daa88bf6-b495-456c-8e1d-1621f3a2792e",
+    "n": "AxiomAxiom89"
+   }
+  ],
+  "develepor": [
+   {
+    "u": "ec403109-3b7b-43e3-85e1-70eae0e3f9a4",
+    "n": "QuartzQuartz60"
+   }
+  ],
+  "trial-developer": [
+   {
+    "u": "0cbb701e-2be0-4edf-8fc6-3be636e859b5",
+    "n": "MossWither27"
+   }
+  ],
+  "head-staff": [
+   {
+    "u": "4ffade3a-278c-4f72-872a-888c5c0483b4",
+    "n": "QuartzLava48"
+   }
+  ],
+  "sr-admin": [
+   {
+    "u": "1cdeeaf0-c9be-4021-8110-9f323a37f6ac",
+    "n": "PixelWither15"
+   }
+  ],
+  "admin": [
+   {
+    "u": "3cf2e813-9214-4a87-8f16-500613ecc6df",
+    "n": "FrostLava61"
+   },
+   {
+    "u": "56779baa-bedf-477f-8f51-5ebbfc33c1ec",
+    "n": "LavaMoss58"
+   }
+  ],
+  "sr-mod": [
+   {
+    "u": "7d9d4a66-393e-4d5a-8e14-e0260be23fb2",
+    "n": "CreeperLava11"
+   },
+   {
+    "u": "c9c25bf8-9cbb-4910-8939-439ad3e0b6ca",
+    "n": "FrostCreeper92"
+   }
+  ],
+  "moderator": [
+   {
+    "u": "8d6dcbed-3b22-4ff0-814f-df4307825730",
+    "n": "BlazeCreeper66"
+   },
+   {
+    "u": "7cb8b69f-cfb9-4c21-8ba6-867111553a20",
+    "n": "BlazeFrost88"
+   },
+   {
+    "u": "0c56ec0f-3a60-42cc-83dd-5744eda7dddc",
+    "n": "ZephyrMoss35"
+   }
+  ],
+  "jr-mod": [
+   {
+    "u": "b5d2dad7-cd03-4309-8cad-dd38768c8673",
+    "n": "MossRaven36"
+   },
+   {
+    "u": "498f9599-a923-415a-8da6-56220761a671",
+    "n": "FrostNetherite37"
+   },
+   {
+    "u": "136399cc-7da1-49be-89f4-f014deb838c2",
+    "n": "FrostMoss62"
+   }
+  ],
+  "trainee": [
+   {
+    "u": "f40b89ba-0bfd-4a93-8a97-0daf4bf99337",
+    "n": "WitherBlaze61"
+   },
+   {
+    "u": "cd149654-156a-4886-89ef-7dfa6a040d13",
+    "n": "LavaQuartz34"
+   },
+   {
+    "u": "2c49c0de-cf12-40f7-848d-bc019b146caa",
+    "n": "EnderAxiom99"
+   }
+  ]
+ }
+}

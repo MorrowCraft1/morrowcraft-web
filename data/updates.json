@@ -1,0 +1,16 @@
+{
+ "sample": true,
+ "updated": "2026-10-29T03:10:37.058Z",
+ "items": [
+  {
+   "id": "u1",
+   "ts": "2026-10-28T19:10:37.066Z",
+   "author": {
+    "name": "Sample Staff",
+    "avatar": null
+   },
+   "text": "**Patch notes**\n- Fixed a chunk lag issue at spawn\n- Leaderboard now tracks Max Streak",
+   "url": null
+  }
+ ]
+}
