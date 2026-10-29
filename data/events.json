@@ -1,16 +1,1 @@
-{
- "sample": true,
- "updated": "2026-10-29T03:10:37.058Z",
- "items": [
-  {
-   "id": "e1",
-   "ts": "2026-10-28T07:10:37.066Z",
-   "author": {
-    "name": "Sample Staff",
-    "avatar": null
-   },
-   "text": "PvP tournament this weekend. Starts {{t:1793502637}}. Sign up in the events channel.",
-   "url": null
-  }
- ]
-}
+{"updated":"2026-10-29T12:09:46.697Z","items":[]}
