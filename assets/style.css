@@ -389,3 +389,16 @@ footer { margin-top: auto; border-top: 3px solid transparent; border-image: line
 .owner-person { max-width: 100%; }
 .owner-person b { font-size: clamp(1.7rem, 7vw, 2.4rem); overflow-wrap: anywhere; }
 @media (max-width: 480px) { .owner-person { padding: 18px 20px 0 18px; gap: 14px; min-width: 0; width: 100%; } .owner-skin { height: 120px; } }
+
+/* leaderboard podium */
+.podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; margin-bottom: 16px; }
+.pod { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 10px 0; text-align: center; border-radius: 14px 14px 0 0; border: 1px solid var(--line); border-bottom: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 18%, var(--surface-2)), var(--surface)); overflow: hidden; }
+.pod b { font-size: 1.1rem; overflow-wrap: anywhere; }
+.pod span { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pod .head { border-radius: 10px; image-rendering: pixelated; box-shadow: 0 0 0 3px var(--pc); }
+.pod-rank { font: 800 1.8rem/1 var(--display); font-style: italic; color: var(--pc); }
+.pod i { display: block; width: 100%; margin-top: 8px; background: var(--pc); opacity: .85; height: var(--ph); }
+.pod.p1 { --pc: #ffd84a; --ph: 14px; padding-top: 26px; } .pod.p2 { --pc: #d6dcea; --ph: 8px; } .pod.p3 { --pc: #e8955a; --ph: 5px; }
+.more { display: block; margin: 14px auto 0; }
+@media (max-width: 480px) { .podium { gap: 8px; } .pod b { font-size: .92rem; } .pod .head { width: 44px; height: 44px; } .pod.p1 .head { width: 56px; height: 56px; } .pod-rank { font-size: 1.4rem; } }

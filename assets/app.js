@@ -409,11 +409,11 @@
     }));
 
     const fmt = (c, r) => (c.useDisplay && r.d) ? r.d : Number(r.v).toLocaleString();
-    const state = { cat: cats[0].key, q: '' };
+    const state = { cat: cats[0].key, q: '', shown: 15 };
     const input = h('input', { type: 'search', id: 'lb-search', placeholder: 'Search a player…', autocomplete: 'off', 'aria-label': 'Search a player' });
     const profile = h('div', {});
-    const tableWrap = h('div', { class: 'table-wrap' });
-    const tabs = subTabs(cats.map(c => ({ id: c.key, label: c.label })), key => { state.cat = key; render(); }, 'Categories');
+    const tableWrap = h('div', {});
+    const tabs = subTabs(cats.map(c => ({ id: c.key, label: c.label })), key => { state.cat = key; state.shown = 15; render(); }, 'Categories');
 
     function render() {
       const q = state.q.trim().toLowerCase();
@@ -439,19 +439,31 @@
         }
       }
 
-      const rows = (data.categories[cat.key] || []).map((r, i) => ({ r, rank: i + 1 }))
+      const all = (data.categories[cat.key] || []).map((r, i) => ({ r, rank: i + 1 }))
         .filter(x => !q || String(x.r.n).toLowerCase().includes(q)).slice(0, 100);
+      const podium = !q && all.length >= 3 ? all.slice(0, 3) : [];
+      const rest = all.slice(podium.length);
+      const rows = rest.slice(0, state.shown);
       const table = h('table', {},
         h('thead', {}, h('tr', {}, h('th', {}, 'Rank'), h('th', {}, 'Player'), h('th', { class: 'val' }, cat.label))),
         h('tbody', {}, rows.length ? rows.map(({ r, rank }) =>
-          h('tr', { class: (rank <= 3 ? 'top' + rank : '') + (q ? ' hit' : '') },
+          h('tr', { class: q ? 'hit' : '' },
             h('td', { class: 'rank' }, '#' + rank),
             h('td', {}, h('div', { class: 'pl' }, head(r.u, r.n), r.n)),
-            h('td', { class: 'val' }, fmt(cat, r)))) : h('tr', {}, h('td', { colspan: 3, class: 'empty' }, 'Nobody ranked here yet.'))));
-      tableWrap.replaceChildren(table);
+            h('td', { class: 'val' }, fmt(cat, r)))) : (podium.length ? [] : h('tr', {}, h('td', { colspan: 3, class: 'empty' }, 'Nobody ranked here yet.')))));
+      const more = rest.length > rows.length
+        ? h('button', { class: 'btn btn-green more', type: 'button', onclick: () => { state.shown += 15; render(); } }, 'Show more (' + (rest.length - rows.length) + ' left)') : null;
+      const pod = podium.length ? h('div', { class: 'podium' }, [podium[1], podium[0], podium[2]].map(({ r, rank }) =>
+        h('div', { class: 'pod p' + rank },
+          h('div', { class: 'pod-rank' }, '#' + rank),
+          head(r.u, r.n, rank === 1 ? 72 : 56),
+          h('b', {}, r.n),
+          h('span', {}, fmt(cat, r)),
+          h('i', {})))) : null;
+      tableWrap.replaceChildren(...[pod, rows.length ? h('div', { class: 'table-wrap' }, table) : null, more].filter(Boolean));
     }
 
-    input.addEventListener('input', () => { state.q = input.value; render(); });
+    input.addEventListener('input', () => { state.q = input.value; state.shown = 15; render(); });
     body.replaceChildren(...[
       sampleNotice(data),
       h('div', { class: 'lb-tools' }, h('div', { class: 'search' }, input), updatedLabel(data)),
