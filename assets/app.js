@@ -471,23 +471,41 @@
     out.push(h('div', { class: 'card apply', style: 'margin-bottom:30px' },
       h('p', {}, S.staff.applyText),
       h('a', { class: 'btn btn-red', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
-    const rowFor = key => {
-      const r = S.staff.ranks.find(x => x.key === key);
-      if (!r) return null;
+    const people = r => {
       let m = data.ranks[r.key] || [];
       if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }
-      return h('div', { class: 'rank-row' },
-        h('div', { class: 'rank-name', style: '--c:' + r.color }, h('i'), r.label, m.length ? h('small', {}, '· ' + m.length) : null),
-        h('div', { class: 'members' }, m.length
-          ? m.map(p => h('div', { class: 'member' }, head(p.u, p.n), h('b', {}, p.n)))
-          : h('span', { class: 'tbd' }, 'TBD')));
+      return m;
+    };
+    const cardFor = key => {
+      const r = S.staff.ranks.find(x => x.key === key);
+      if (!r) return null;
+      const m = people(r);
+      return h('article', { class: 'rank-card' + (m.length ? '' : ' open'), style: '--c:' + r.color },
+        h('header', {}, h('h4', {}, r.label), h('span', { class: 'count' }, m.length ? String(m.length) : 'open')),
+        m.length
+          ? h('ul', {}, m.map(p => h('li', {}, head(p.u, p.n, 40), h('b', {}, p.n))))
+          : h('a', { class: 'slot', href: S.links.applications, target: '_blank', rel: 'noopener' },
+              h('span', { class: 'slot-box' }), h('span', {}, 'Position open', h('small', {}, 'Apply on Discord'))));
+    };
+    const ownerCard = key => {
+      const r = S.staff.ranks.find(x => x.key === key);
+      const m = r ? people(r) : [];
+      return h('div', { class: 'owner-hero' }, m.length
+        ? m.map(p => h('div', { class: 'owner-person' },
+            h('img', { class: 'owner-skin', alt: '', width: 120, height: 120, src: 'https://mc-heads.net/body/' + encodeURIComponent(p.u || p.n) + '/200',
+              onerror: ev => { ev.target.replaceWith(head(p.u, p.n, 96)); } }),
+            h('div', {}, h('small', {}, r.label), h('b', {}, p.n))))
+        : h('span', { class: 'tbd' }, 'TBD'));
     };
     for (const sec of S.staff.sections) {
-      out.push(h('section', { class: 'tier' + (sec.style === 'owner' ? ' owner-card' : '') },
+      const owner = sec.style === 'owner';
+      out.push(h('section', { class: 'tier' + (owner ? ' owner-tier' : '') },
         h('h2', { class: 'display' }, sec.title),
-        sec.groups
-          ? sec.groups.map(g => h('div', { class: 'group' }, h('h3', { class: 'group-title' }, g.title), g.ranks.map(rowFor)))
-          : (sec.ranks || []).map(rowFor)));
+        owner ? (sec.ranks || []).map(ownerCard)
+        : sec.groups
+          ? h('div', { class: 'groups' }, sec.groups.map(g => h('div', { class: 'group' },
+              h('h3', { class: 'group-title' }, g.title), h('div', { class: 'rank-grid' }, g.ranks.map(cardFor)))))
+          : h('div', { class: 'rank-grid' }, (sec.ranks || []).map(cardFor))));
     }
     body.replaceChildren(...out.filter(Boolean));
   };
