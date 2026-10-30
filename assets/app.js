@@ -302,7 +302,7 @@
         h('p', { class: 'intro' }, S.intro),
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
-          h('a', { class: 'btn btn-red', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
+          h('a', { class: 'btn btn-ghost', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
       h('div', { class: 'connect' },
         h('div', { class: 'card panel' },
           h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Connect')),
@@ -314,7 +314,7 @@
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
-        h('a', { class: 'btn ' + (t.tone === 'red' ? 'btn-red' : 'btn-green'), href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
+        h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
       h('h2', { class: 'display section-title' }, 'Features'),
       h('div', { class: 'feat-grid' }, S.features.map(f =>
         h('article', { class: 'card feat' },
@@ -335,7 +335,7 @@
             ? j.sections.map(sec => h('div', { class: 'join-sec' }, h('h3', {}, sec.heading), steps(sec.steps)))
             : steps(j.steps),
           j.links && j.links.length
-            ? h('div', { class: 'join-links' }, j.links.map(l => h('a', { class: 'btn btn-red', href: l.url, target: '_blank', rel: 'noopener' }, l.label)))
+            ? h('div', { class: 'join-links' }, j.links.map(l => h('a', { class: 'btn btn-green', href: l.url, target: '_blank', rel: 'noopener' }, l.label)))
             : null),
         h('div', { class: 'copy-list' }, (j.copy || []).map(c => {
           const val = tpl(c.value);
@@ -482,7 +482,7 @@
     const out = [sampleNotice(data)];
     out.push(h('div', { class: 'card apply', style: 'margin-bottom:30px' },
       h('p', {}, S.staff.applyText),
-      h('a', { class: 'btn btn-red', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
+      h('a', { class: 'btn btn-green', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
     const people = r => {
       let m = data.ranks[r.key] || [];
       if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }

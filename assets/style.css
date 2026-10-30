@@ -402,3 +402,10 @@ footer { margin-top: auto; border-top: 3px solid transparent; border-image: line
 .pod.p1 { --pc: #ffd84a; --ph: 14px; padding-top: 26px; } .pod.p2 { --pc: #d6dcea; --ph: 8px; } .pod.p3 { --pc: #e8955a; --ph: 5px; }
 .more { display: block; margin: 14px auto 0; }
 @media (max-width: 480px) { .podium { gap: 8px; } .pod b { font-size: .92rem; } .pod .head { width: 44px; height: 44px; } .pod.p1 .head { width: 56px; height: 56px; } .pod-rank { font-size: 1.4rem; } }
+
+/* buttons: one colour (green) with a plain outline for the second choice */
+.addr-row.bedrock { border-left-color: var(--green); }
+.btn-ghost { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); }
+.btn-ghost:hover { background: rgba(85,221,51,.1); }
+.apply { border-left-color: var(--green); }
+.tile::after, .tile.red::after { background: var(--green); }
