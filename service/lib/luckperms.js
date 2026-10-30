@@ -19,7 +19,7 @@ export function makePool(prefix, database) {
 /**
  * Staff roster from LuckPerms. A player counts as a rank when they have the
  * permission "group.<name>" set directly (not expired). Each player is listed
- * once, under the highest rank in site.config.js (top of the list = highest).
+ * once, under the highest rank in site.yml (top of the list = highest).
  * Returns { groupKey: [{ u: uuid, n: name }] }
  */
 export async function fetchStaff(site, pool) {

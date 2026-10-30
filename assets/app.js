@@ -1,9 +1,28 @@
-/* MorrowCraft site. Everything on the page is built from site.config.js
+/* MorrowCraft site. Everything on the page is built from site.yml (the one file you edit)
    plus the JSON files in data/ that the data service keeps fresh. */
 (() => {
   'use strict';
-  const S = window.SITE;
-  if (!S) { document.body.textContent = 'site.config.js failed to load.'; return; }
+
+  /* Loads site.yml, then starts the site. A mistake in the file shows a plain message with the line number. */
+  function fail(msg) {
+    const box = document.createElement('div');
+    box.style.cssText = 'max-width:640px;margin:12vh auto;padding:24px;background:#121c42;color:#e9edf9;border:2px solid #e90c09;border-radius:12px;font:16px/1.5 system-ui,sans-serif';
+    box.innerHTML = '<h2 style="margin:0 0 8px">The website content has a mistake</h2><p style="margin:0 0 12px">Open <b>site.yml</b> on GitHub and fix the spot below. Compare with the lines around it.</p><pre style="white-space:pre-wrap;background:#080d22;padding:12px;border-radius:8px;margin:0"></pre>';
+    box.querySelector('pre').textContent = msg;
+    document.body.replaceChildren(box);
+  }
+  fetch('/site.yml', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error('site.yml could not be loaded (' + r.status + ').'); return r.text(); })
+    .then(txt => {
+      let cfg;
+      try { cfg = window.jsyaml.safeLoad(txt); }
+      catch (e) { throw new Error('site.yml, line ' + ((e.mark && e.mark.line) + 1 || '?') + ': ' + (e.reason || e.message)); }
+      if (!cfg || typeof cfg !== 'object') throw new Error('site.yml is empty.');
+      main(cfg);
+    })
+    .catch(e => fail(e.message || String(e)));
+
+  function main(S) {
 
   /* ---------------- helpers ---------------- */
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -546,4 +565,5 @@
   })));
   addEventListener('popstate', () => show(idFromLocation()));
   show(idFromLocation());
+  }
 })();

@@ -1,5 +1,5 @@
 /* MorrowCraft site styles.
-   Colours come from site.config.js (they overwrite these defaults at load).
+   Colours come from site.yml (they overwrite these defaults at load).
    Layout idea: the page sits in a centred navy column. The area either side fades from dark red
    (left) to dark green (right), like the old store. A red tab bar runs across the top of the column. */
 

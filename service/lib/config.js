@@ -1,19 +1,22 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import vm from 'node:vm';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const serviceDir = path.resolve(here, '..');
 export const repoDir = path.resolve(serviceDir, '..');
 
-/** Reads site.config.js (the one file you edit) so group names, stat keys and channel IDs live in one place. */
+/** Reads site.yml (the one file you edit) so group names, stat keys and channel IDs live in one place.
+ *  Uses the same js-yaml copy the website loads, so there is nothing extra to install. */
 export function loadSite() {
-  const file = path.join(repoDir, 'site.config.js');
-  const sandbox = { window: {} };
-  vm.runInNewContext(fs.readFileSync(file, 'utf8'), sandbox, { timeout: 1000 });
-  if (!sandbox.window.SITE) throw new Error('site.config.js did not define window.SITE');
-  return sandbox.window.SITE;
+  const jsyaml = createRequire(import.meta.url)(path.join(repoDir, 'assets', 'vendor', 'js-yaml.min.js'));
+  const file = path.join(repoDir, 'site.yml');
+  let site;
+  try { site = jsyaml.safeLoad(fs.readFileSync(file, 'utf8')); }
+  catch (e) { throw new Error(`site.yml has a mistake near line ${(e.mark && e.mark.line + 1) || '?'}: ${e.reason || e.message}`); }
+  if (!site || typeof site !== 'object') throw new Error('site.yml is empty');
+  return site;
 }
 
 /** Minimal .env loader (no extra dependency). Real environment variables win. */

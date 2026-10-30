@@ -2,7 +2,7 @@
 
 The site has two parts:
 
-1. **The website** (`index.html`, `assets/`, `site.config.js`). Plain files. Edit `site.config.js` to change anything: text, links, colours, tabs, rules, FAQ, staff ranks, leaderboard stats, Discord channels.
+1. **The website** (`index.html`, `assets/`, `site.yml`). Plain files. Edit `site.yml` to change anything: text, links, colours, tabs, rules, FAQ, staff ranks, leaderboard stats, Discord channels.
 2. **The data service** (`service/`). A small Node.js program that reads LuckPerms, your leaderboard database and Discord, then writes JSON files into `data/`. The website shows whatever is in those files. Until the service runs, the site shows clearly labelled sample data.
 
 Live server status needs nothing extra. The browser asks a public status service (mcstatus.io, then mcsrvstat.us as a backup) about `play.morrowcraft.net`.
@@ -20,7 +20,7 @@ Your domain is on Cloudflare, so the simplest setup is **Cloudflare Pages** conn
 
 The data service commits fresh JSON files to the repo, and Cloudflare redeploys the site when that happens. The service skips a commit when nothing changed, so you only get a redeploy when something is new (a new post, a rank change, a leaderboard shift). With a 15 minute interval the leaderboard will change most runs. If you want fewer deploys, raise `INTERVAL_MINUTES` in `.env` (30 or 60 is fine).
 
-`data.base` in `site.config.js` stays at `/data/`.
+`data.base` in `site.yml` stays at `/data/`.
 
 Alternative: if you would rather not redeploy on every data update, keep the data on a `data` branch of a public repo and set `data.base` to `https://raw.githubusercontent.com/MorrowCraft1/morrowcraft-web/data/data/`. That only works if the repo is public.
 
@@ -44,7 +44,7 @@ The bot you already have needs:
 - **View Channel** and **Read Message History** on the news, updates and events channels.
 - The **Message Content Intent** switched on (Discord developer portal → your application → **Bot**). Without it, Discord returns empty message text.
 
-Never paste the bot token into chat, into `site.config.js` or into the repo. It only goes in `service/.env`.
+Never paste the bot token into chat, into `site.yml` or into the repo. It only goes in `service/.env`.
 
 ## 3b. Automatic refresh with GitHub Actions (recommended)
 
@@ -92,11 +92,11 @@ GitHub → Settings → Developer settings → Fine-grained tokens → generate 
 
 ### AI summaries (optional)
 
-Add `ANTHROPIC_API_KEY` to `.env`. Messages longer than `minLength` (set in `site.config.js`) get a one or two sentence summary on the News tab, with the full message one click away. Each message is summarised once, so the cost is tiny. Leave the key empty to turn it off.
+Add `ANTHROPIC_API_KEY` to `.env`. Messages longer than `minLength` (set in `site.yml`) get a one or two sentence summary on the News tab, with the full message one click away. Each message is summarised once, so the cost is tiny. Leave the key empty to turn it off.
 
 ## 5. Where to change things
 
-| To change | Edit in `site.config.js` |
+| To change | Edit in `site.yml` |
 |---|---|
 | Server address, port, version | `server` |
 | Store, Discord, voice chat, applications link, email | `links` |
@@ -116,14 +116,16 @@ Notes on the staff roster:
 
 ## Editing the website (no coding)
 
-Everything you can change is in **`site.config.js`**. To edit it on GitHub: open the repo, click the file, click the **pencil** icon, change the text, then click **Commit changes**. Cloudflare updates the live site within a minute or two.
+Everything you can change is in **`site.yml`**, a plain text file with comments that explain each part. To edit it on GitHub: open the repo, click `site.yml`, click the **pencil** icon, change the text, then click **Commit changes**. Cloudflare updates the live site within a minute or two.
 
-- **Add an FAQ question:** find `faq: [`. Copy one whole block from `{ q:` to its `},`, paste it under the last one, and change the question (`q`) and answer (`a`). Keep the quote marks and the comma.
-- **Add or edit a feature on the Home page:** find `features: [`. Copy one line, paste it under the last one and change `title` and `text`.
-- **Add a picture to a feature:** on GitHub open the `assets` folder, then `features` (create it with **Add file, Create new file** and a name like `features/readme.txt` if it does not exist). Click **Add file, Upload files**, upload your image and commit. Then set `image: "/assets/features/yourfile.png"` on that feature.
-- **Add a console video link on the Bedrock page:** find the `links: [` line inside the Bedrock entry and add `{ label: "Console video guide", url: "https://..." }`.
+YAML rules: keep the spaces at the start of each line exactly as they are (no tabs), and put quote marks around text that contains a colon (`:`) or starts with `#` or `*`. If you make a mistake, the website shows a message with the line number instead of loading, and the data service logs the same message. Fix the line and commit again.
 
-Page addresses: Home is `morrowcraft.net`. The others are `morrowcraft.net/join`, `/news`, `/leaderboard`, `/staff`, `/rules` and `/faq`. Each address has a small file of its own in the repo (`join.html`, `staff.html` and so on, copies of `index.html`), so reloading or sharing a link works on Cloudflare without any extra settings. If you add a new tab in `site.config.js`, also copy `index.html` to `<id>.html` (open `index.html`, copy everything, then create the new file with Add file, Create new file).
+- **Add an FAQ question:** find `faq:`. Copy one `- q:` block with its `a:` line, paste it under the last one, and change the words.
+- **Add or edit a feature on the Home page:** find `features:`. Copy one block (`- title:` down to its `image:` line), paste it under the last one and change `title` and `text`.
+- **Add a picture to a feature:** on GitHub open the `assets` folder, click **Add file, Upload files**, upload your image and commit. Then set `image: /assets/yourfile.png` on that feature.
+- **Add a console video link on the Bedrock page:** in the Bedrock entry under `join:`, set `links:` to a list, for example `- label: Console video guide` with `url: https://...` on the next line.
+
+Page addresses: Home is `morrowcraft.net`. The others are `morrowcraft.net/join`, `/news`, `/leaderboard`, `/staff`, `/rules` and `/faq`. Each address has a small file of its own in the repo (`join.html`, `staff.html` and so on, copies of `index.html`), so reloading or sharing a link works on Cloudflare without any extra settings. If you add a new tab in `site.yml`, also copy `index.html` to `<id>.html` (open `index.html`, copy everything, then create the new file with Add file, Create new file).
 
 ## 6. Security checklist
 
