@@ -16,15 +16,12 @@ intro: MorrowCraft is a semi-vanilla survival server designed for both competiti
 # Logo file. To change it, upload a new picture to the assets folder and put its path here.
 logo: /assets/logo.png
 # ----------------------------------------------------------------------
-# Brand colours: red is the primary, green is the secondary, the Light ones are softer tints of each.
-# Staff rank colours are in the staff section: red tints for leadership, green tints for moderation. Keep to these two families.
+# Brand colours. Anything with a # is a hex colour code.
 colors:
   red: '#e90c09'
   redDeep: '#9f0809'
-  redLight: '#ff6b64'
   green: '#55dd33'
   greenDeep: '#22aa22'
-  greenLight: '#b9f7a3'
   bg: '#080d22'
   bgLeft: '#2e080d'
   bgRight: '#08301a'
@@ -85,7 +82,7 @@ tiles:
     text: 'Tickets, applications, announcements and the community. Join to get support and find players.'
     cta: Join the Discord
     link: discord
-    tone: green
+    tone: red
   - title: Voice chat
     text: Proximity voice chat for Java and Bedrock from your browser. Log in with your link from the game.
     cta: Open voice chat
@@ -175,37 +172,37 @@ staff:
         - zMorrow
     - key: manager
       label: Staff Manager
-      color: '#e90c09'
+      color: '#ffe14d'
     - key: trial-manager
       label: Trial Manager
-      color: '#ff6b64'
+      color: '#c9bd4a'
     - key: develepor
       label: Developer
-      color: '#e90c09'
+      color: '#a24bff'
     - key: trial-developer
       label: Trial Developer
-      color: '#ff6b64'
+      color: '#b98cf0'
     - key: head-staff
       label: Head Staff
-      color: '#e90c09'
+      color: '#ff6a00'
     - key: sr-admin
       label: Senior Admin
-      color: '#f2403b'
+      color: '#ff8a1f'
     - key: admin
       label: Admin
-      color: '#ff6b64'
+      color: '#ffab00'
     - key: sr-mod
       label: Senior Moderator
-      color: '#22aa22'
+      color: '#1f8fe0'
     - key: moderator
       label: Moderator
-      color: '#55dd33'
+      color: '#2bb3ff'
     - key: jr-mod
       label: Junior Moderator
-      color: '#8cf070'
+      color: '#3fd0ff'
     - key: trainee
       label: Trainee
-      color: '#b9f7a3'
+      color: '#7cf0ff'
   sections:
     - title: Owner
       style: owner
