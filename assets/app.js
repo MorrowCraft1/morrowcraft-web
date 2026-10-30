@@ -481,11 +481,10 @@
       if (!r) return null;
       const m = people(r);
       return h('article', { class: 'rank-card' + (m.length ? '' : ' open'), style: '--c:' + r.color },
-        h('header', {}, h('h4', {}, r.label), h('span', { class: 'count' }, m.length ? String(m.length) : 'open')),
+        h('header', {}, h('h4', {}, r.label), h('span', { class: 'count' }, m.length ? String(m.length) : '0')),
         m.length
           ? h('ul', {}, m.map(p => h('li', {}, head(p.u, p.n, 40), h('b', {}, p.n))))
-          : h('a', { class: 'slot', href: S.links.applications, target: '_blank', rel: 'noopener' },
-              h('span', { class: 'slot-box' }), h('span', {}, 'Position open', h('small', {}, 'Apply on Discord'))));
+          : h('div', { class: 'slot' }, h('span', { class: 'slot-box' }), h('span', {}, 'Nobody has this rank yet')));
     };
     const ownerCard = key => {
       const r = S.staff.ranks.find(x => x.key === key);
