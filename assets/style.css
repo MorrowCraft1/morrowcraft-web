@@ -435,3 +435,7 @@ td.rank { color: var(--muted); }
 .compare-gap { margin-top: 56px; }
 .owner-person .presence { display: flex; margin: 10px 0 0; gap: 7px; }
 .owner-person .pd { width: 11px; height: 11px; }
+/* smaller live numbers */
+.sv-count { font: 700 1.5rem/1.2 var(--body); font-style: normal; }
+.sv-count small { font-size: 1rem; font-weight: 500; }
+.sv-card { gap: 10px; padding: 24px 28px; }
