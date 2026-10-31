@@ -75,23 +75,8 @@ links:
 data:
   base: /data/
 # ----------------------------------------------------------------------
-# The three cards under the connect box on Home. tone is red or green. link is the name of an entry in links above.
-tiles:
-  - title: Store
-    text: Ranks and crate keys. Everything is optional and pays for upkeep. Ranks are built to not be pay to win.
-    cta: Visit the store
-    link: store
-    tone: green
-  - title: Discord
-    text: 'Tickets, applications, announcements and the community. Join to get support and find players.'
-    cta: Join the Discord
-    link: discord
-    tone: red
-  - title: Voice chat
-    text: Proximity voice chat for Java and Bedrock from your browser. Log in with your link from the game.
-    cta: Open voice chat
-    link: voice
-    tone: green
+# Link cards under the server boxes on Home. Each needs title, text, cta (button label), link (a name from links above) and tone: green.
+tiles: []   # the three link cards that used to sit under the server boxes (Store, Discord, Voice chat). Add entries here to bring them back.
 # ----------------------------------------------------------------------
 # FEATURES LIST on the Home page.
 # To add one: copy a whole block (from "- title" down to its last line), paste it under the last one, change the words.

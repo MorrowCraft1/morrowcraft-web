@@ -394,3 +394,7 @@ footer { margin-top: auto; border-top: 2px solid var(--line); background: rgba(4
 .sv-extra { margin-top: -2px; }
 @media (max-width: 600px) { .sv-card .sv-row { flex-wrap: nowrap; } .sv-card .sv-row .v { flex: 1 1 auto; font-size: .95rem; } }
 @media (max-width: 600px) { .sv-card .sv-row { flex-wrap: wrap; } .sv-card .sv-row .v { flex: 1 1 100%; overflow: visible; text-overflow: clip; font-size: .95rem; } }
+.server-boxes { margin-top: 48px; }
+.sv-extra { margin-top: auto; }
+.sv-card .sv-row { margin-top: 4px; }
+.section-title { margin-top: 72px; }

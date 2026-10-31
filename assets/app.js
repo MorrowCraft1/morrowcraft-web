@@ -384,7 +384,8 @@
         h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort)),
       card('Discord Server', dPill, dCount, [
         h('a', { class: 'v', href: S.links.discord, target: '_blank', rel: 'noopener' }, discordLink),
-        copyBtn(S.links.discord, 'Discord link')]));
+        copyBtn(S.links.discord, 'Discord link')],
+        h('a', { class: 'btn btn-green btn-sm', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord')));
   }
 
   builders.home = () => {
@@ -401,12 +402,12 @@
         h('p', { class: 'intro' }, S.intro),
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
-          h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
+          h('a', { class: 'btn btn-green', href: S.links.store, target: '_blank', rel: 'noopener' }, 'Visit the store'))),
       serverBox(),
-      h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
+      (S.tiles && S.tiles.length) ? h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
-        h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
+        h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))) : document.createComment(''),
       h('h2', { class: 'display section-title' }, 'Features'),
       h('div', { class: 'feat-grid' }, S.features.map(f =>
         h('article', { class: 'card feat' },
