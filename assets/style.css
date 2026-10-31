@@ -556,3 +556,79 @@ footer { background: var(--glass-strong); -webkit-backdrop-filter: blur(18px); b
 .feat::before, .feat:nth-child(even)::before { background: var(--green); }
 .dw-off .dw-main b { display: none; }
 .dw-off .dw-sub { color: var(--text); font-size: 1rem; }
+
+/* =====================================================================
+   SPACING PASS: more air between everything
+   ===================================================================== */
+:root { --gutter-l: max(24px, env(safe-area-inset-left, 0px)); --gutter-r: max(24px, env(safe-area-inset-right, 0px)); }
+.shell { max-width: 1240px; }
+.view { padding-top: 56px; padding-bottom: 96px; }
+.view-head { margin-bottom: 40px; padding-bottom: 22px; }
+.view-head p { margin-top: 12px; line-height: 1.65; font-size: 1.05rem; }
+.hero { gap: 30px; padding-top: 16px; }
+.hero .intro { max-width: 58ch; line-height: 1.75; font-size: 1.08rem; }
+.hero-live { gap: 14px; }
+.hero-actions { gap: 14px; margin-top: 4px; }
+.btn { padding: 15px 28px; }
+.btn-sm { padding: 10px 18px; }
+.connect { gap: 24px; margin-top: 72px; }
+.tiles { gap: 24px; margin-top: 24px; }
+.panel { padding: 30px 32px; gap: 20px; }
+.tile { padding: 32px 30px; gap: 14px; }
+.tile p { line-height: 1.7; }
+.addr { gap: 14px; }
+.addr-row { padding: 14px 14px 14px 18px; }
+.section-title, .tier > h2 { margin-top: 88px; margin-bottom: 28px; }
+.feat-grid { gap: 24px; }
+.feat-body { padding: 26px 26px 28px 30px; }
+.feat h3 { margin-bottom: 10px; }
+.feat p { line-height: 1.7; }
+.dw { margin-top: 24px; padding: 30px 32px; gap: 20px; }
+.tier { margin-bottom: 56px; }
+.tier > h2 { margin-top: 0; }
+.groups { gap: 36px; }
+.rank-grid { gap: 18px; }
+.rank-card { padding: 22px 20px 18px; }
+.rank-card ul { gap: 10px; }
+.rank-card li { padding: 8px 14px 8px 8px; }
+.apply { padding: 26px 30px; margin-bottom: 48px !important; }
+.owner-person { padding: 30px 48px 0 36px; }
+.acc { gap: 16px; }
+.acc summary { padding: 22px 26px; }
+.acc .body { padding: 6px 26px 26px; line-height: 1.75; }
+.callouts { gap: 14px; margin-bottom: 28px; }
+.callout { padding: 18px 22px; line-height: 1.65; }
+.join-panel { padding: 34px; gap: 40px; }
+.steps { gap: 20px; }
+.steps li { line-height: 1.7; }
+.subtabs { gap: 12px; margin-bottom: 28px; }
+.lb-tools { margin-bottom: 22px; }
+.podium { gap: 22px; margin: 36px 0 28px; }
+.pod { padding: 26px 14px 0; gap: 10px; }
+td, th { padding: 16px 22px; }
+.matrix th, .matrix td { padding: 18px 22px; }
+.profile { padding: 26px 28px; margin-bottom: 28px; }
+.post, .feed .card, .feed article { padding: 28px 30px; }
+footer { margin-top: 72px; margin-bottom: 24px; }
+.foot { padding: 44px 40px; gap: 48px; }
+.foot p { line-height: 1.7; margin-top: 12px; }
+.foot nav { gap: 12px 28px; }
+.support { margin-top: 24px; padding: 18px 22px; }
+.bar-wrap { padding-top: 18px; }
+.bar { min-height: 60px; padding: 8px 10px 8px 14px; }
+.tab { padding: 14px 17px; }
+@media (max-width: 900px) {
+  .view { padding-top: 36px; padding-bottom: 72px; }
+  .connect { margin-top: 48px; gap: 18px; }
+  .tiles { gap: 18px; }
+  .panel, .tile, .dw { padding: 24px; }
+  .section-title { margin-top: 64px; }
+  .join-panel { padding: 24px; gap: 28px; }
+  .foot { padding: 32px 24px; gap: 32px; }
+  .podium { gap: 10px; }
+  td, th, .matrix th, .matrix td { padding: 14px 14px; }
+}
+@media (min-width: 901px) and (max-width: 1120px) { .tab { padding: 12px 11px; } }
+.slot { padding: 2px 0 4px; font-size: .92rem; font-weight: 500; }
+.rank-card.open { padding-bottom: 16px; }
+.rank-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }

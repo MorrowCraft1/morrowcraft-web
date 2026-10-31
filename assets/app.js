@@ -553,10 +553,10 @@
       if (!r) return null;
       const m = people(r);
       return h('article', { class: 'rank-card' + (m.length ? '' : ' open'), style: '--c:' + r.color },
-        h('header', {}, h('h4', {}, r.label), h('span', { class: 'count' }, m.length ? String(m.length) : '0')),
+        h('header', {}, h('h4', {}, r.label), m.length ? h('span', { class: 'count' }, String(m.length)) : null),
         m.length
           ? h('ul', {}, m.map(p => h('li', {}, head(p.u, p.n, 40), h('b', {}, p.n))))
-          : h('div', { class: 'slot' }, h('span', { class: 'slot-box' }), h('span', {}, 'Nobody has this rank yet')));
+          : h('div', { class: 'slot' }, 'Nobody has this rank'));
     };
     const ownerCard = key => {
       const r = S.staff.ranks.find(x => x.key === key);
