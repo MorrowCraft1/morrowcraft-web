@@ -374,3 +374,17 @@ footer { margin-top: auto; border-top: 2px solid var(--line); background: rgba(4
 .rb-body .btn { white-space: nowrap; padding-left: 12px; padding-right: 12px; }
 .join-panel { min-height: 0; }
 .join-help { margin-top: 40px; }
+
+/* ----- two server boxes ----- */
+.server-boxes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 56px; }
+.sv-card { display: flex; flex-direction: column; gap: 14px; padding: 28px 30px; background: linear-gradient(160deg, rgba(85,221,51,.06), transparent 55%), rgba(17,26,61,.72); border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(8px); }
+.sv-card:nth-child(2) { background: linear-gradient(160deg, rgba(88,101,242,.10), transparent 55%), rgba(17,26,61,.72); }
+.sv-card .sv-meta { flex: 1; }
+.sv-card .sv-row { margin-top: 4px; }
+.sv-row a.v { color: var(--text); text-decoration: none; }
+.sv-row a.v:hover { color: var(--green); }
+@media (max-width: 900px) { .server-boxes { grid-template-columns: minmax(0, 1fr); } .sv-card { padding: 24px; } }
+.sv-card .sv-row { flex-wrap: nowrap; gap: 10px; }
+.sv-card .sv-row .v { font-size: 1.05rem; flex: 1 1 auto; min-width: 0; }
+.sv-card .port-chip { font-size: .74rem; padding: 3px 9px; }
+@media (max-width: 600px) { .sv-card .sv-row { flex-wrap: wrap; } .sv-card .sv-row .v { flex: 1 1 100%; } }

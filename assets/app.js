@@ -347,33 +347,54 @@
     return card;
   }
 
-  /* The server box: live status on the left, every address on the right. */
+  /* Two boxes: the Minecraft server and the Discord server, each with a live count and one copy row. */
   function serverBox() {
     buildStatus();   // starts the live check; results arrive as an event
-    const pill = h('span', { class: 'pill' }, 'Checking');
-    const big = h('div', { class: 'sv-count' }, '–');
-    const bar = h('i', {});
-    const meta = h('div', { class: 'sv-meta' }, '');
+    const mcPill = h('span', { class: 'pill' }, 'Checking');
+    const mcCount = h('div', { class: 'sv-count' }, '–');
+    const mcBar = h('i', {});
+    const mcMeta = h('div', { class: 'sv-meta' }, 'Updates every minute');
     document.addEventListener('mc:status', e => {
       const st = e.detail;
-      if (!st) { pill.className = 'pill'; pill.textContent = 'Unavailable'; big.replaceChildren('–'); meta.textContent = 'Could not reach the status service.'; bar.style.width = '0'; return; }
-      if (!st.online) { pill.className = 'pill off'; pill.textContent = 'Offline'; big.replaceChildren('–'); meta.textContent = 'The server is not responding right now.'; bar.style.width = '0'; return; }
-      pill.className = 'pill on'; pill.textContent = 'Online';
-      big.replaceChildren(String(st.players ?? 0), h('small', {}, ' / ' + (st.max ?? '?') + ' players'));
-      bar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
-      meta.textContent = 'Updates every minute';
+      mcBar.style.width = '0';
+      if (!st) { mcPill.className = 'pill'; mcPill.textContent = 'Unavailable'; mcCount.replaceChildren('–'); mcMeta.textContent = 'Could not reach the status service.'; return; }
+      if (!st.online) { mcPill.className = 'pill off'; mcPill.textContent = 'Offline'; mcCount.replaceChildren('–'); mcMeta.textContent = 'The server is not responding right now.'; return; }
+      mcPill.className = 'pill on'; mcPill.textContent = 'Online';
+      mcCount.replaceChildren(String(st.players ?? 0), h('small', {}, ' / ' + (st.max ?? '?') + ' players'));
+      mcBar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
+      mcMeta.textContent = 'Java ' + S.server.version + ' · updates every minute';
     });
-    return h('section', { class: 'server-box' },
-      h('div', { class: 'sv-live' },
-        h('div', { class: 'sv-head' }, h('span', { class: 'label' }, 'Real-time Minecraft server'), pill),
-        big, h('div', { class: 'sv-bar' }, bar), meta),
-      h('div', { class: 'sv-join' },
-        h('span', { class: 'label' }, 'Server address'),
-        h('div', { class: 'sv-row' },
-          h('span', { class: 'v' }, S.server.javaHost),
-          h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort),
-          copyBtn(S.server.javaHost, 'server address')),
-        h('div', { class: 'sv-note' }, 'Java ' + S.server.version + '. ' + (S.server.versionNote || ''))));
+
+    const dPill = h('span', { class: 'pill' }, 'Checking');
+    const dCount = h('div', { class: 'sv-count' }, '–');
+    const dBar = h('i', {});
+    const dMeta = h('div', { class: 'sv-meta' }, 'Chat, tickets, applications and announcements.');
+    const W = (S.discord && S.discord.widget) || {};
+    if (W.guildId) {
+      fetchJSON('https://discord.com/api/guilds/' + encodeURIComponent(W.guildId) + '/widget.json').then(r => {
+        const members = r.members || [];
+        const online = r.presence_count ?? members.length;
+        const voice = members.filter(m => m.channel_id).length;
+        dPill.className = 'pill on'; dPill.textContent = 'Online';
+        dCount.replaceChildren(String(online), h('small', {}, ' members online'));
+        dBar.style.width = Math.min(100, online / Math.max(online, 100) * 100) + '%';
+        dMeta.textContent = voice ? voice + ' in voice chat right now' : 'Chat, tickets, applications and announcements.';
+      }).catch(() => { dPill.className = 'pill'; dPill.textContent = 'Join us'; dCount.replaceChildren('Discord'); });
+    } else { dPill.className = 'pill'; dPill.textContent = 'Join us'; dCount.replaceChildren('Discord'); }
+
+    const card = (title, pill, count, bar, meta, rowEls) => h('section', { class: 'sv-card' },
+      h('div', { class: 'sv-head' }, h('span', { class: 'label' }, title), pill),
+      count, h('div', { class: 'sv-bar' }, bar), meta,
+      h('div', { class: 'sv-row' }, rowEls));
+    const discordLink = S.links.discord.replace(/^https?:\/\//, '');
+    return h('div', { class: 'server-boxes' },
+      card('Minecraft Server', mcPill, mcCount, mcBar, mcMeta, [
+        h('span', { class: 'v' }, S.server.javaHost),
+        h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort),
+        copyBtn(S.server.javaHost, 'server address')]),
+      card('Discord Server', dPill, dCount, dBar, dMeta, [
+        h('a', { class: 'v', href: S.links.discord, target: '_blank', rel: 'noopener' }, discordLink),
+        copyBtn(S.links.discord, 'Discord link')]));
   }
 
   builders.home = () => {
@@ -395,7 +416,6 @@
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
-        t.link === 'discord' ? discordLive() : null,
         h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
       h('h2', { class: 'display section-title' }, 'Features'),
       h('div', { class: 'feat-grid' }, S.features.map(f =>
