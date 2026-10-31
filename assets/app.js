@@ -361,11 +361,11 @@
       pill.className = 'pill on'; pill.textContent = 'Online';
       big.replaceChildren(String(st.players ?? 0), h('small', {}, ' / ' + (st.max ?? '?') + ' players'));
       bar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
-      meta.textContent = [st.version, st.motd].filter(Boolean).join(' · ');
+      meta.textContent = 'Updates every minute';
     });
     return h('section', { class: 'server-box' },
       h('div', { class: 'sv-live' },
-        h('div', { class: 'sv-head' }, h('span', { class: 'label' }, 'Live server status'), pill),
+        h('div', { class: 'sv-head' }, h('span', { class: 'label' }, 'Real-time Minecraft server'), pill),
         big, h('div', { class: 'sv-bar' }, bar), meta),
       h('div', { class: 'sv-join' },
         h('span', { class: 'label' }, 'Server address'),
