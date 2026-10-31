@@ -352,47 +352,36 @@
     buildStatus();   // starts the live check; results arrive as an event
     const mcPill = h('span', { class: 'pill' }, 'Checking');
     const mcCount = h('div', { class: 'sv-count' }, '–');
-    const mcBar = h('i', {});
-    const mcMeta = h('div', { class: 'sv-meta' }, 'Updates every minute');
     document.addEventListener('mc:status', e => {
       const st = e.detail;
-      mcBar.style.width = '0';
-      if (!st) { mcPill.className = 'pill'; mcPill.textContent = 'Unavailable'; mcCount.replaceChildren('–'); mcMeta.textContent = 'Could not reach the status service.'; return; }
-      if (!st.online) { mcPill.className = 'pill off'; mcPill.textContent = 'Offline'; mcCount.replaceChildren('–'); mcMeta.textContent = 'The server is not responding right now.'; return; }
+      if (!st) { mcPill.className = 'pill'; mcPill.textContent = 'Unavailable'; mcCount.replaceChildren('–'); return; }
+      if (!st.online) { mcPill.className = 'pill off'; mcPill.textContent = 'Offline'; mcCount.replaceChildren('–'); return; }
       mcPill.className = 'pill on'; mcPill.textContent = 'Online';
       mcCount.replaceChildren(String(st.players ?? 0), h('small', {}, ' / ' + (st.max ?? '?') + ' players'));
-      mcBar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
-      mcMeta.textContent = 'Java ' + S.server.version + ' · updates every minute';
     });
 
     const dPill = h('span', { class: 'pill' }, 'Checking');
     const dCount = h('div', { class: 'sv-count' }, '–');
-    const dBar = h('i', {});
-    const dMeta = h('div', { class: 'sv-meta' }, 'Chat, tickets, applications and announcements.');
     const W = (S.discord && S.discord.widget) || {};
+    const dFallback = () => { dPill.className = 'pill'; dPill.textContent = 'Join us'; dCount.replaceChildren('Discord'); };
     if (W.guildId) {
       fetchJSON('https://discord.com/api/guilds/' + encodeURIComponent(W.guildId) + '/widget.json').then(r => {
-        const members = r.members || [];
-        const online = r.presence_count ?? members.length;
-        const voice = members.filter(m => m.channel_id).length;
         dPill.className = 'pill on'; dPill.textContent = 'Online';
-        dCount.replaceChildren(String(online), h('small', {}, ' members online'));
-        dBar.style.width = Math.min(100, online / Math.max(online, 100) * 100) + '%';
-        dMeta.textContent = voice ? voice + ' in voice chat right now' : 'Chat, tickets, applications and announcements.';
-      }).catch(() => { dPill.className = 'pill'; dPill.textContent = 'Join us'; dCount.replaceChildren('Discord'); });
-    } else { dPill.className = 'pill'; dPill.textContent = 'Join us'; dCount.replaceChildren('Discord'); }
+        dCount.replaceChildren(String(r.presence_count ?? (r.members || []).length), h('small', {}, ' members online'));
+      }).catch(dFallback);
+    } else dFallback();
 
-    const card = (title, pill, count, bar, meta, rowEls) => h('section', { class: 'sv-card' },
+    const card = (title, pill, count, rowEls) => h('section', { class: 'sv-card' },
       h('div', { class: 'sv-head' }, h('span', { class: 'label' }, title), pill),
-      count, h('div', { class: 'sv-bar' }, bar), meta,
+      count,
       h('div', { class: 'sv-row' }, rowEls));
     const discordLink = S.links.discord.replace(/^https?:\/\//, '');
     return h('div', { class: 'server-boxes' },
-      card('Minecraft Server', mcPill, mcCount, mcBar, mcMeta, [
+      card('Minecraft Server', mcPill, mcCount, [
         h('span', { class: 'v' }, S.server.javaHost),
         h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort),
         copyBtn(S.server.javaHost, 'server address')]),
-      card('Discord Server', dPill, dCount, dBar, dMeta, [
+      card('Discord Server', dPill, dCount, [
         h('a', { class: 'v', href: S.links.discord, target: '_blank', rel: 'noopener' }, discordLink),
         copyBtn(S.links.discord, 'Discord link')]));
   }
