@@ -398,3 +398,10 @@ footer { margin-top: auto; border-top: 2px solid var(--line); background: rgba(4
 .sv-extra { margin-top: auto; }
 .sv-card .sv-row { margin-top: 4px; }
 .section-title { margin-top: 72px; }
+
+/* leaderboard podium: gold, silver, bronze */
+.pod.p1 { --pc: #ffd84a; box-shadow: 0 0 40px -14px rgba(255,216,74,.5); }
+.pod.p2 { --pc: #d6dcea; box-shadow: 0 0 36px -16px rgba(214,220,234,.45); }
+.pod.p3 { --pc: #e0894a; box-shadow: 0 0 36px -16px rgba(224,137,74,.5); }
+.pod.p1, .pod.p2, .pod.p3 { border-color: color-mix(in srgb, var(--pc) 55%, var(--line)); }
+td.rank { color: var(--muted); }
