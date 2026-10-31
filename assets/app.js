@@ -318,6 +318,19 @@
     return h('div', { class: 'hero-live' }, pill, ip);
   }
 
+  /* One quiet line inside the Discord tile: members online and who is in voice. */
+  function discordLive() {
+    const W = (S.discord && S.discord.widget) || {};
+    const line = h('div', { class: 'dw-line' });
+    if (!W.guildId) return line;
+    fetchJSON('https://discord.com/api/guilds/' + encodeURIComponent(W.guildId) + '/widget.json').then(r => {
+      const members = r.members || [];
+      const voice = members.filter(m => m.channel_id).length;
+      line.append(h('i', { class: 'live-dot' }), (r.presence_count ?? members.length) + ' online' + (voice ? ' · ' + voice + ' in voice' : ''));
+    }).catch(() => {});
+    return line;
+  }
+
   /* Discord join box. Reads Discord's public widget (online members and who is in voice). */
   function buildDiscord() {
     const W = (S.discord && S.discord.widget) || {};
@@ -358,7 +371,6 @@
         h('div', { class: 'logo-frame' }, h('img', { src: S.logo, alt: S.name + ' logo', width: 200, height: 200 })),
         h('h1', { class: 'wordmark' }, h('span', { class: 'wm wm-a' }, a), b ? h('span', { class: 'wm wm-b' }, b) : null),
         h('p', { class: 'intro' }, S.intro),
-        heroLive(),
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
           h('a', { class: 'btn btn-ghost', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
@@ -373,8 +385,8 @@
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
+        t.link === 'discord' ? discordLive() : null,
         h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
-      buildDiscord(),
       h('h2', { class: 'display section-title' }, 'Features'),
       h('div', { class: 'feat-grid' }, S.features.map(f =>
         h('article', { class: 'card feat' },

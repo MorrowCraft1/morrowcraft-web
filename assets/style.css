@@ -632,3 +632,51 @@ footer { margin-top: 72px; margin-bottom: 24px; }
 .slot { padding: 2px 0 4px; font-size: .92rem; font-weight: 500; }
 .rank-card.open { padding-bottom: 16px; }
 .rank-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+
+/* =====================================================================
+   DECLUTTER: fewer lines, fewer glows, one idea per block
+   ===================================================================== */
+body { background:
+  radial-gradient(1000px 640px at 6% -8%, rgba(233,12,9,.13), transparent 65%),
+  radial-gradient(1000px 640px at 96% -4%, rgba(85,221,51,.09), transparent 65%), var(--bg); background-attachment: fixed; }
+.hero::before { display: none; }
+.logo-frame { box-shadow: none; }
+.wordmark .wm { filter: none; }
+.view-head { border: 0; border-image: none; padding-bottom: 0; margin-bottom: 36px; }
+.view-head h1::before { display: none; }
+.view-head h1 { font-size: clamp(2rem, 4.2vw, 2.8rem); }
+.view-head p { color: var(--muted); }
+.section-title { font-size: 1.5rem; margin-top: 72px; }
+.section-title::after, .tier > h2::after { display: none; }
+.tier > h2 { font-size: 1.3rem; color: var(--muted); letter-spacing: .08em; }
+.tab-ind { box-shadow: none; background: rgba(233,12,9,.8); }
+.pill-btn.pill-dark { display: none; }
+.card, .acc details, .table-wrap, .callout, .profile, .apply { box-shadow: none; background: rgba(255,255,255,.035); border-color: rgba(255,255,255,.08); }
+.tile::after { display: none; }
+.tile { gap: 12px; }
+.tile h2 { font-size: 1.5rem; }
+.tile:hover, .feat:hover, .rank-card:hover, .acc details:hover { transform: none; box-shadow: none; border-color: rgba(85,221,51,.4); }
+.btn-green { box-shadow: none; }
+.btn-green:hover { box-shadow: none; }
+.feat::before { display: none; }
+.feat-body { padding: 24px; }
+.feat h3 { font-size: 1.15rem; }
+.feat p { font-size: .94rem; }
+.dw-line { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .92rem; font-weight: 600; min-height: 1.2em; }
+.dw-line:empty { display: none; }
+.dw-line .live-dot { background: var(--green); }
+.addr-row, .addr-row.bedrock { border-left: 1px solid rgba(255,255,255,.08); }
+.panel-head .label { color: var(--muted); }
+.connect .panel { background: rgba(255,255,255,.035); }
+.rank-card { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.08); }
+.rank-card::before { box-shadow: none; opacity: .8; }
+.rank-card.open { background: transparent; border-style: dashed; }
+.rank-card li { background: rgba(255,255,255,.04); }
+.owner-person::after { display: none; }
+footer { background: transparent; border: 0; border-top: 1px solid rgba(255,255,255,.08); border-radius: 0; margin: 80px var(--gutter-r) 0 var(--gutter-l); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.foot { padding: 36px 0 44px; }
+.foot nav { display: none; }
+.support { background: transparent; border: 0; padding: 0; margin: 0; }
+.pod { box-shadow: none; }
+.pod.p1 { box-shadow: none; }
+.matrix .grp th { background: transparent; }
