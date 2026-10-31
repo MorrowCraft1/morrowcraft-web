@@ -428,8 +428,8 @@ footer:
   storeNote: Payments are processed securely by Tebex. MorrowCraft does not store payment information.
 
 # ----------------------------------------------------------------------
-# RANKS page: compare what each rank gets. These are DRAFT placeholders (TBD).
-# Rename the tiers (label) and fill in every row. Each row needs one value per tier, in the same order as tiers.
+# RANKS page: compare what each rank gets. Perks are DRAFT placeholders (TBD).
+# Rename Rank 1 to Rank 5 to your real paid rank names and fill in every row. Each row needs one value per tier, in the same order as tiers.
 # Use yes / no for ticks and crosses, or any text (for example "50,000" or "/fly").
 ranks:
   intro: See what each rank unlocks. Tap a rank to highlight its column.
@@ -442,27 +442,39 @@ ranks:
       label: Rank 2
     - id: rank3
       label: Rank 3
+    - id: rank4
+      label: Rank 4
+    - id: rank5
+      label: Rank 5
+    - id: booster
+      label: Booster
+    - id: media
+      label: Media
   groups:
+    - title: How to get it
+      rows:
+        - label: Unlocked by
+          values: [Joining, Store, Store, Store, Store, Store, 'Boosting our Discord', 'Use /media in game']
     - title: Limits
       rows:
         - label: Claim block limit
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
         - label: Home limit
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
     - title: Kits
       rows:
         - label: Starter kit
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
         - label: Rank kit
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
     - title: Commands
       rows:
         - label: Extra commands
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
     - title: Perks
       rows:
         - label: Chat and cosmetic perks
-          values: [TBD, TBD, TBD, TBD]
+          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
 
 # ----------------------------------------------------------------------
 # WIKI page: one accordion per server system. To add one, copy a block ("- title:" down to its last line).
