@@ -363,18 +363,17 @@
       bar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
       meta.textContent = [st.version, st.motd].filter(Boolean).join(' · ');
     });
-    const row = (k, host, port, what) => h('div', { class: 'sv-row' },
-      h('span', { class: 'label' }, k),
-      h('span', { class: 'v' }, host, port ? h('span', { class: 'port' }, ':' + port) : null),
-      copyBtn(host, what));
     return h('section', { class: 'server-box' },
       h('div', { class: 'sv-live' },
         h('div', { class: 'sv-head' }, h('span', { class: 'label' }, 'Live server status'), pill),
         big, h('div', { class: 'sv-bar' }, bar), meta),
       h('div', { class: 'sv-join' },
-        row('Java', S.server.javaHost, null, 'Java address'),
-        row('Bedrock', S.server.bedrockHost, S.server.bedrockPort, 'Bedrock address'),
-        h('div', { class: 'sv-note' }, 'Java version ' + S.server.version + '. ' + (S.server.versionNote || ''))));
+        h('span', { class: 'label' }, 'Server address'),
+        h('div', { class: 'sv-row' },
+          h('span', { class: 'v' }, S.server.javaHost),
+          h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort),
+          copyBtn(S.server.javaHost, 'server address')),
+        h('div', { class: 'sv-note' }, 'Java ' + S.server.version + '. ' + (S.server.versionNote || ''))));
   }
 
   builders.home = () => {
@@ -427,7 +426,11 @@
             copyBtn(val, c.label.toLowerCase()));
         })));
     }, 'Platform');
-    v.append(tabs.el, panel);
+    v.append(tabs.el, panel, h('div', { class: 'join-help' },
+      h('div', {}, h('h3', {}, 'Stuck on a step?'), h('p', {}, 'Open a ticket in our Discord and a staff member will help you get in.')),
+      h('div', { class: 'join-help-actions' },
+        h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'),
+        h('a', { class: 'mail', href: 'mailto:' + S.links.email }, S.links.email))));
     const wanted = location.hash.slice(1);
     tabs.pick(S.join.some(j => j.id === wanted) ? wanted : S.join[0].id);
   };
@@ -606,37 +609,26 @@
 
   builders.ranks = () => {
     const v = $('#view-ranks');
-    const R = S.ranks || { tiers: [], groups: [] };
+    const R = S.ranks || { items: [] };
     v.append(viewHead('Ranks', R.intro));
-    let active = null;
-    const cells = [];
-    const mark = val => {
-      const t = String(val).trim().toLowerCase();
-      if (t === 'yes') return h('span', { class: 'tick yes', 'aria-label': 'Yes' }, '✓');
-      if (t === 'no') return h('span', { class: 'tick no', 'aria-label': 'No' }, '–');
-      return mdEl('span', String(val));
-    };
-    const setActive = i => {
-      active = active === i ? null : i;
-      cells.forEach(c => c.el.classList.toggle('on', c.col === active));
-    };
-    const head = h('tr', {}, h('th', { class: 'feat-col' }, 'Perk'), R.tiers.map((t, i) => {
-      const th = h('th', { scope: 'col' }, h('button', { type: 'button', 'aria-pressed': 'false', onclick: e => {
-        setActive(i);
-        head.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(active === j)));
-      } }, t.label));
-      cells.push({ el: th, col: i });
-      return th;
-    }));
-    const body = h('tbody', {});
-    for (const g of R.groups) {
-      body.append(h('tr', { class: 'grp' }, h('th', { colspan: R.tiers.length + 1 }, g.title)));
-      for (const row of g.rows) {
-        body.append(h('tr', {}, h('th', { scope: 'row', class: 'feat-col' }, row.label),
-          R.tiers.map((_, i) => { const td = h('td', {}, mark((row.values || [])[i] ?? '–')); cells.push({ el: td, col: i }); return td; })));
-      }
-    }
-    v.append(h('div', { class: 'card table-wrap matrix' }, h('table', {}, h('thead', {}, head), body)));
+    const boxes = (R.items || []).map(r => {
+      const logo = r.image
+        ? h('img', { class: 'rb-logo', src: r.image, alt: '', width: 56, height: 56, loading: 'lazy' })
+        : h('span', { class: 'rb-logo rb-initial', 'aria-hidden': 'true' }, String(r.label || '?').charAt(0));
+      const body = h('div', { class: 'rb-body', hidden: true },
+        h('ul', { class: 'perks' }, (r.perks || []).map(p => h('li', {}, h('span', {}, p.label), h('b', {}, String(p.value ?? '–'))))),
+        r.note ? h('p', { class: 'rb-note' }, r.note) : null,
+        r.button ? h('a', { class: 'btn btn-green', href: r.button.url || S.links.store, target: '_blank', rel: 'noopener' }, r.button.label || 'Open store') : null);
+      const box = h('article', { class: 'rank-box' });
+      const head = h('button', { class: 'rb-head', type: 'button', 'aria-expanded': 'false', onclick: () => {
+        const open = box.classList.toggle('open');
+        head.setAttribute('aria-expanded', String(open));
+        body.hidden = !open;
+      } }, logo, h('span', { class: 'rb-title' }, h('b', {}, r.label), h('small', {}, r.tag || '')), h('span', { class: 'rb-how' }, r.how || ''), h('i', { class: 'rb-chev', 'aria-hidden': 'true' }));
+      box.append(head, body);
+      return box;
+    });
+    v.append(h('div', { class: 'rank-boxes' }, boxes));
   };
 
   builders.wiki = () => {

@@ -326,3 +326,51 @@ footer { margin-top: auto; border-top: 2px solid var(--line); background: rgba(4
 .sv-note { color: var(--muted); font-size: .86rem; }
 @media (max-width: 900px) { .server-box { grid-template-columns: minmax(0, 1fr); } .sv-live { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px; } .sv-join { padding: 24px; } .sv-count { font-size: 3rem; } }
 @media (max-width: 600px) { .sv-row { flex-wrap: wrap; gap: 4px 12px; } .sv-row .label { width: 100%; } .sv-row .v { flex: 1 1 0; font-size: .95rem; overflow-wrap: normal; } }
+
+/* ----- server address: one row ----- */
+.sv-join { gap: 12px; }
+.sv-row { flex-wrap: wrap; }
+.sv-row .v { flex: 1 1 auto; font-size: 1.2rem; }
+.sv-row .port { display: none; }
+.port-chip { color: var(--green); font-size: .82rem; font-weight: 600; border: 1px solid color-mix(in srgb, var(--green) 40%, var(--line)); border-radius: 99px; padding: 3px 11px; white-space: nowrap; }
+
+/* ----- join: fill the page ----- */
+.steps { gap: 26px; }
+.steps li { font-size: 1.1rem; grid-template-columns: 40px minmax(0, 1fr); }
+.steps li::before { width: 40px; height: 40px; font-size: 1.4rem; }
+.join-panel { min-height: 300px; padding-top: 40px; }
+.copy-box { padding: 20px 20px 20px 22px; }
+.copy-box .v { font-size: 1.15rem; }
+.join-help { margin-top: 56px; padding: 28px 32px; display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: center; justify-content: space-between; background: rgba(17,26,61,.7); border: 1px solid var(--line); border-radius: 14px; }
+.join-help h3 { font-size: 1.5rem; margin-bottom: 6px; }
+.join-help p { margin: 0; color: var(--muted); }
+.join-help-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.join-help .mail { font-family: var(--mono); color: var(--text); text-decoration: none; }
+.join-help .mail:hover { color: var(--green); }
+
+/* ----- ranks: one box per rank ----- */
+.rank-boxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 20px; align-items: start; }
+.rank-box { background: rgba(17,26,61,.7); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: border-color .18s, background .18s; }
+.rank-box:hover { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); }
+.rank-box.open { border-color: var(--green); background: rgba(17,26,61,.92); }
+.rb-head { display: grid; grid-template-columns: 56px minmax(0, 1fr) 18px; grid-template-areas: "logo title chev" "logo how chev"; column-gap: 14px; row-gap: 2px; align-items: center; width: 100%; padding: 18px; appearance: none; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rb-logo { grid-area: logo; width: 56px; height: 56px; border-radius: 12px; object-fit: cover; background: var(--surface-2); }
+.rb-initial { display: grid; place-items: center; font: 800 1.8rem var(--display); font-style: italic; color: var(--green); background: linear-gradient(135deg, rgba(233,12,9,.25), rgba(85,221,51,.2)); }
+.rb-title { grid-area: title; display: flex; flex-direction: column; min-width: 0; }
+.rb-title b { font: 800 1.3rem/1.1 var(--display); font-style: italic; text-transform: uppercase; }
+.rb-title small { color: var(--muted); font-size: .8rem; }
+.rb-how { grid-area: how; color: var(--green); font-size: .85rem; font-weight: 600; }
+.rb-chev { grid-area: chev; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .2s; justify-self: center; }
+.rank-box.open .rb-chev { transform: rotate(-135deg); border-color: var(--green); }
+.rb-body { padding: 0 18px 20px; border-top: 1px solid var(--line); }
+.rb-body[hidden] { display: none; }
+.perks { list-style: none; margin: 0; padding: 4px 0 14px; }
+.perks li { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .92rem; }
+.perks li span { color: var(--muted); }
+.perks li b { font-weight: 600; text-align: right; }
+.rb-note { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
+.rb-body .btn { width: 100%; }
+.rank-box.open .rb-chev { transform: rotate(225deg); }
+.rb-body .btn { white-space: nowrap; padding-left: 12px; padding-right: 12px; }
+.join-panel { min-height: 0; }
+.join-help { margin-top: 40px; }

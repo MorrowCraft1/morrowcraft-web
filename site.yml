@@ -428,53 +428,176 @@ footer:
   storeNote: Payments are processed securely by Tebex. MorrowCraft does not store payment information.
 
 # ----------------------------------------------------------------------
-# RANKS page: compare what each rank gets. Perks are DRAFT placeholders (TBD).
-# Rename Rank 1 to Rank 5 to your real paid rank names and fill in every row. Each row needs one value per tier, in the same order as tiers.
-# Use yes / no for ticks and crosses, or any text (for example "50,000" or "/fly").
+# RANKS page: one box per rank. Click a rank to open it and see its store button.
+# These are DRAFT placeholders: rename the ranks, fill in every TBD, and add a picture for each rank logo.
+# image: upload the picture to the assets folder on GitHub (for example assets/ranks/rank1.png) and write /assets/ranks/rank1.png here.
+# button: the label and link shown when the rank is open. Leave url empty to use the store link.
 ranks:
-  intro: See what each rank unlocks. Tap a rank to highlight its column.
-  tiers:
+  intro: Pick a rank to see what it unlocks and how to get it.
+  items:
     - id: default
       label: Default
+      tag: Everyone
+      image: ''
+      how: Free
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: rank1
       label: Rank 1
+      tag: Paid rank
+      image: ''
+      how: Store
+      button:
+        label: Get it on the store
+        url: ''
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: rank2
       label: Rank 2
+      tag: Paid rank
+      image: ''
+      how: Store
+      button:
+        label: Get it on the store
+        url: ''
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: rank3
       label: Rank 3
+      tag: Paid rank
+      image: ''
+      how: Store
+      button:
+        label: Get it on the store
+        url: ''
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: rank4
       label: Rank 4
+      tag: Paid rank
+      image: ''
+      how: Store
+      button:
+        label: Get it on the store
+        url: ''
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: rank5
       label: Rank 5
+      tag: Paid rank
+      image: ''
+      how: Store
+      button:
+        label: Get it on the store
+        url: ''
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: booster
       label: Booster
+      tag: Discord boosters
+      image: ''
+      how: Boost our Discord
+      button:
+        label: Join the Discord
+        url: 'https://discord.morrowcraft.net'
+      perks:
+        - label: Claim block limit
+          value: TBD
+        - label: Home limit
+          value: TBD
+        - label: Starter kit
+          value: TBD
+        - label: Rank kit
+          value: TBD
+        - label: Extra commands
+          value: TBD
+        - label: Chat and cosmetic perks
+          value: TBD
     - id: media
       label: Media
-  groups:
-    - title: How to get it
-      rows:
-        - label: Unlocked by
-          values: [Joining, Store, Store, Store, Store, Store, 'Boosting our Discord', 'Use /media in game']
-    - title: Limits
-      rows:
+      tag: Content creators
+      image: ''
+      how: Use /media in game
+      note: Requirements are listed in game with /media.
+      perks:
         - label: Claim block limit
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
+          value: TBD
         - label: Home limit
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
-    - title: Kits
-      rows:
+          value: TBD
         - label: Starter kit
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
+          value: TBD
         - label: Rank kit
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
-    - title: Commands
-      rows:
+          value: TBD
         - label: Extra commands
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
-    - title: Perks
-      rows:
+          value: TBD
         - label: Chat and cosmetic perks
-          values: [TBD, TBD, TBD, TBD, TBD, TBD, TBD, TBD]
+          value: TBD
 
 # ----------------------------------------------------------------------
 # WIKI page: one accordion per server system. To add one, copy a block ("- title:" down to its last line).
