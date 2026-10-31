@@ -347,6 +347,36 @@
     return card;
   }
 
+  /* The server box: live status on the left, every address on the right. */
+  function serverBox() {
+    buildStatus();   // starts the live check; results arrive as an event
+    const pill = h('span', { class: 'pill' }, 'Checking');
+    const big = h('div', { class: 'sv-count' }, '–');
+    const bar = h('i', {});
+    const meta = h('div', { class: 'sv-meta' }, '');
+    document.addEventListener('mc:status', e => {
+      const st = e.detail;
+      if (!st) { pill.className = 'pill'; pill.textContent = 'Unavailable'; big.replaceChildren('–'); meta.textContent = 'Could not reach the status service.'; bar.style.width = '0'; return; }
+      if (!st.online) { pill.className = 'pill off'; pill.textContent = 'Offline'; big.replaceChildren('–'); meta.textContent = 'The server is not responding right now.'; bar.style.width = '0'; return; }
+      pill.className = 'pill on'; pill.textContent = 'Online';
+      big.replaceChildren(String(st.players ?? 0), h('small', {}, ' / ' + (st.max ?? '?') + ' players'));
+      bar.style.width = st.max ? Math.min(100, (st.players || 0) / st.max * 100) + '%' : '0';
+      meta.textContent = [st.version, st.motd].filter(Boolean).join(' · ');
+    });
+    const row = (k, host, port, what) => h('div', { class: 'sv-row' },
+      h('span', { class: 'label' }, k),
+      h('span', { class: 'v' }, host, port ? h('span', { class: 'port' }, ':' + port) : null),
+      copyBtn(host, what));
+    return h('section', { class: 'server-box' },
+      h('div', { class: 'sv-live' },
+        h('div', { class: 'sv-head' }, h('span', { class: 'label' }, 'Live server status'), pill),
+        big, h('div', { class: 'sv-bar' }, bar), meta),
+      h('div', { class: 'sv-join' },
+        row('Java', S.server.javaHost, null, 'Java address'),
+        row('Bedrock', S.server.bedrockHost, S.server.bedrockPort, 'Bedrock address'),
+        h('div', { class: 'sv-note' }, 'Java version ' + S.server.version + '. ' + (S.server.versionNote || ''))));
+  }
+
   builders.home = () => {
     const v = $('#view-home');
     const [a, b] = S.name.replace(/(.)([A-Z])/, '$1\u0000$2').split('\u0000');
@@ -362,15 +392,7 @@
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
           h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
-      h('div', { class: 'connect' },
-        h('div', { class: 'connect-main' },
-          h('span', { class: 'label' }, 'Server address'),
-          h('span', { class: 'ip' }, S.server.javaHost),
-          copyBtn(S.server.javaHost, 'server address', 'Copy')),
-        h('div', { class: 'connect-meta' },
-          buildStatus(),
-          h('span', {}, 'Java ' + S.server.version),
-          h('span', {}, 'Bedrock port ' + S.server.bedrockPort))),
+      serverBox(),
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
