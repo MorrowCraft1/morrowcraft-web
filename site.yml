@@ -45,6 +45,10 @@ tabs:
     label: Leaderboard
   - id: staff
     label: Staff
+  - id: ranks
+    label: Ranks
+  - id: wiki
+    label: Wiki
   - id: rules
     label: Rules
   - id: faq
@@ -261,6 +265,9 @@ leaderboard:
 # ----------------------------------------------------------------------
 # DISCORD feeds (News tab). channelId = the channel the bot reads. aiSummaries needs the ANTHROPIC_API_KEY secret.
 discord:
+  widget:
+    # Turn on Server Settings > Widget in Discord (tick "Enable server widget") or the live box shows only the join button.
+    guildId: '1102069205290975325'
   feeds:
     news:
       label: News
@@ -411,11 +418,83 @@ faq:
   - q: Where can I submit a ban appeal or a support ticket?
     a: 'Open a ticket in our Discord at [discord.morrowcraft.net](https://discord.morrowcraft.net). Remember that ban appeals must include evidence.'
   - q: Are store ranks pay to win?
-    a: 'No. Ranks are designed to be non pay to win, though they do come with useful perks. All purchases are optional and the money goes towards upkeep and upgrades. Payments are handled by CraftingStore, Stripe and PayPal, and we never store your payment details.'
+    a: 'No. Ranks are designed to be non pay to win, though they do come with useful perks. All purchases are optional and the money goes towards upkeep and upgrades. Payments are processed securely by Tebex, and we never store your payment details.'
   - q: Can I get a refund?
-    a: 'All sales are final and payments are non-refundable unless stated otherwise. Subscription ranks renew automatically unless cancelled before renewal, and you can manage them through CraftingStore.'
+    a: 'All sales are final and payments are non-refundable unless stated otherwise. Subscription ranks renew automatically unless cancelled before renewal, and you can manage them through Tebex.'
 # ----------------------------------------------------------------------
 # Footer text.
 footer:
   note: MorrowCraft is not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.
-  storeNote: Payments are processed securely by CraftingStore. MorrowCraft does not store payment information.
+  storeNote: Payments are processed securely by Tebex. MorrowCraft does not store payment information.
+
+# ----------------------------------------------------------------------
+# RANKS page: compare what each rank gets. These are DRAFT placeholders (TBD).
+# Rename the tiers (label) and fill in every row. Each row needs one value per tier, in the same order as tiers.
+# Use yes / no for ticks and crosses, or any text (for example "50,000" or "/fly").
+ranks:
+  intro: See what each rank unlocks. Tap a rank to highlight its column.
+  tiers:
+    - id: default
+      label: Default
+    - id: rank1
+      label: Rank 1
+    - id: rank2
+      label: Rank 2
+    - id: rank3
+      label: Rank 3
+  groups:
+    - title: Limits
+      rows:
+        - label: Claim block limit
+          values: [TBD, TBD, TBD, TBD]
+        - label: Home limit
+          values: [TBD, TBD, TBD, TBD]
+    - title: Kits
+      rows:
+        - label: Starter kit
+          values: [TBD, TBD, TBD, TBD]
+        - label: Rank kit
+          values: [TBD, TBD, TBD, TBD]
+    - title: Commands
+      rows:
+        - label: Extra commands
+          values: [TBD, TBD, TBD, TBD]
+    - title: Perks
+      rows:
+        - label: Chat and cosmetic perks
+          values: [TBD, TBD, TBD, TBD]
+
+# ----------------------------------------------------------------------
+# WIKI page: one accordion per server system. To add one, copy a block ("- title:" down to its last line).
+# body is a list of paragraphs. Text can use `code`, **bold** and [link](url).
+wiki:
+  intro: How the custom parts of MorrowCraft work.
+  entries:
+    - title: Diamonds and Roses
+      sub: The two currencies
+      body:
+        - 'MorrowCraft has two currencies, **Diamonds** and **Roses**. Each one has its own leaderboard, so you can see who has the most.'
+        - 'Keep your diamonds in `/bank`. You need them there to bid at Black Market auctions.'
+    - title: Black Market auctions
+      sub: Bid on rare custom items
+      body:
+        - 'Black Market auctions are hosted by the owner and announced in the News tab and on Discord. Bring your diamonds in `/bank`, then bid on custom items such as OP custom enchantments.'
+        - 'Use `/warp BlackMarket` to get to the auction area.'
+    - title: Teams of 5
+      sub: Play together
+      body:
+        - 'Team up with up to four other players. Team leaderboards track which team is on top.'
+    - title: Ranked PvP and Elo
+      sub: Elo, tiers and streaks
+      body:
+        - 'Every player has an **Elo** rating and a **tier** that change as you win and lose ranked fights. Kill streaks and kills are tracked too.'
+        - 'Check the Leaderboard tab to see where you stand.'
+    - title: Custom enchantments
+      sub: Rare enchantments you cannot find in vanilla
+      body:
+        - 'The server has custom enchantments on top of the vanilla ones. The strongest are sold at Black Market auctions.'
+        - 'Details for each enchantment will be added here.'
+    - title: Land claims
+      sub: Protect your builds
+      body:
+        - 'Use a Golden Shovel or `/claim` to protect your builds. You earn claim blocks just by playing.'

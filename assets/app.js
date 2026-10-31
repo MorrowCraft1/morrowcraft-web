@@ -210,7 +210,8 @@
 
   /* ---------------- header + footer ---------------- */
   function buildHeader() {
-    const tabs = h('nav', { class: 'tabs', id: 'tabs', 'aria-label': 'Pages' }, S.tabs.map(t => tabLink(t, 'tab', t.label)));
+    const ind = h('span', { class: 'tab-ind', 'aria-hidden': 'true' });
+    const tabs = h('nav', { class: 'tabs', id: 'tabs', 'aria-label': 'Pages' }, ind, S.tabs.map(t => tabLink(t, 'tab', t.label)));
     const menu = h('button', {
       class: 'menu-btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'tabs',
       onclick: e => e.currentTarget.setAttribute('aria-expanded', String(tabs.classList.toggle('open')))
@@ -224,6 +225,17 @@
       menu));
   }
 
+  /* Slides the underline under the current tab. */
+  function moveIndicator() {
+    const ind = $('.tab-ind'), cur = $('#tabs .tab[aria-current="page"]');
+    if (!ind || !cur || getComputedStyle(ind).display === 'none') return;
+    ind.style.width = cur.offsetWidth + 'px';
+    ind.style.transform = 'translateX(' + cur.offsetLeft + 'px)';
+    ind.style.opacity = '1';
+  }
+  addEventListener('resize', moveIndicator);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveIndicator);
+
   function buildFooter() {
     const L = S.links;
     const nav = [['Store', L.store], ['Discord', L.discord], ['Voice chat', L.voice], ['Staff applications', L.applications]]
@@ -235,7 +247,8 @@
         h('p', {}, S.footer.note)),
       h('div', {},
         h('nav', {}, nav),
-        h('p', {}, 'Support: ', h('span', { class: 'mail' }, L.email), ' ', copyBtn(L.email, 'email', 'Copy email')))));
+        h('div', { class: 'support' }, h('span', { class: 'label' }, 'Support'),
+          h('a', { class: 'mail', href: 'mailto:' + L.email }, L.email), copyBtn(L.email, 'email', 'Copy email')))));
   }
 
   /* ---------------- views ---------------- */
@@ -251,6 +264,7 @@
       count, meta);
 
     function paint(s) {
+      document.dispatchEvent(new CustomEvent('mc:status', { detail: s }));
       if (!s) {
         pill.className = 'pill'; pill.textContent = 'Unavailable';
         count.textContent = '–'; meta.textContent = 'Could not reach the status service.';
@@ -288,6 +302,50 @@
     return card;
   }
 
+  /* Live player count and a one-click copy box under the intro. */
+  function heroLive() {
+    const dot = h('i', { class: 'live-dot' });
+    const txt = h('span', {}, 'Checking server…');
+    const pill = h('div', { class: 'live-pill' }, dot, txt);
+    document.addEventListener('mc:status', e => {
+      const s = e.detail;
+      pill.dataset.state = !s ? 'unknown' : s.online ? 'on' : 'off';
+      txt.textContent = !s ? 'Status unavailable' : s.online ? (s.players ?? 0) + ' / ' + (s.max ?? '?') + ' players online' : 'Server offline';
+    });
+    const ip = h('div', { class: 'hero-ip' },
+      h('span', { class: 'v' }, S.server.javaHost),
+      copyBtn(S.server.javaHost, 'server address', 'Copy IP'));
+    return h('div', { class: 'hero-live' }, pill, ip);
+  }
+
+  /* Discord join box. Reads Discord's public widget (online members and who is in voice). */
+  function buildDiscord() {
+    const W = (S.discord && S.discord.widget) || {};
+    const count = h('div', { class: 'dw-count' }, '–');
+    const sub = h('div', { class: 'dw-sub' }, 'Loading…');
+    const faces = h('div', { class: 'dw-faces' });
+    const join = h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord');
+    const card = h('div', { class: 'card dw' },
+      h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Discord'), h('span', { class: 'pill on' }, 'Live')),
+      h('div', { class: 'dw-main' }, count, h('div', {}, h('b', {}, 'members online'), sub)),
+      faces, join);
+    if (!W.guildId) { card.hidden = true; return card; }
+    fetchJSON('https://discord.com/api/guilds/' + encodeURIComponent(W.guildId) + '/widget.json').then(r => {
+      const members = r.members || [];
+      count.textContent = String(r.presence_count ?? members.length);
+      const voice = members.filter(m => m.channel_id).length;
+      const chans = (r.channels || []).length;
+      sub.textContent = voice ? voice + ' in voice chat now' : (chans ? chans + ' voice channels, all quiet' : 'Come say hi');
+      faces.replaceChildren(...members.slice(0, 8).map(m => h('img', { src: m.avatar_url, alt: '', title: m.username, width: 32, height: 32, loading: 'lazy' })));
+      if (r.instant_invite) join.href = r.instant_invite;
+    }).catch(() => {
+      count.textContent = '';
+      sub.textContent = 'Chat, tickets, applications and announcements.';
+      card.classList.add('dw-off');
+    });
+    return card;
+  }
+
   builders.home = () => {
     const v = $('#view-home');
     const [a, b] = S.name.replace(/(.)([A-Z])/, '$1\u0000$2').split('\u0000');
@@ -300,6 +358,7 @@
         h('div', { class: 'logo-frame' }, h('img', { src: S.logo, alt: S.name + ' logo', width: 200, height: 200 })),
         h('h1', { class: 'wordmark' }, h('span', { class: 'wm wm-a' }, a), b ? h('span', { class: 'wm wm-b' }, b) : null),
         h('p', { class: 'intro' }, S.intro),
+        heroLive(),
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
           h('a', { class: 'btn btn-ghost', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
@@ -315,6 +374,7 @@
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),
         h('a', { class: 'btn btn-green', href: S.links[t.link], target: '_blank', rel: 'noopener' }, t.cta)))),
+      buildDiscord(),
       h('h2', { class: 'display section-title' }, 'Features'),
       h('div', { class: 'feat-grid' }, S.features.map(f =>
         h('article', { class: 'card feat' },
@@ -521,6 +581,51 @@
     body.replaceChildren(...out.filter(Boolean));
   };
 
+  builders.ranks = () => {
+    const v = $('#view-ranks');
+    const R = S.ranks || { tiers: [], groups: [] };
+    v.append(viewHead('Ranks', R.intro));
+    let active = null;
+    const cells = [];
+    const mark = val => {
+      const t = String(val).trim().toLowerCase();
+      if (t === 'yes') return h('span', { class: 'tick yes', 'aria-label': 'Yes' }, '✓');
+      if (t === 'no') return h('span', { class: 'tick no', 'aria-label': 'No' }, '–');
+      return mdEl('span', String(val));
+    };
+    const setActive = i => {
+      active = active === i ? null : i;
+      cells.forEach(c => c.el.classList.toggle('on', c.col === active));
+    };
+    const head = h('tr', {}, h('th', { class: 'feat-col' }, 'Perk'), R.tiers.map((t, i) => {
+      const th = h('th', { scope: 'col' }, h('button', { type: 'button', 'aria-pressed': 'false', onclick: e => {
+        setActive(i);
+        head.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(active === j)));
+      } }, t.label));
+      cells.push({ el: th, col: i });
+      return th;
+    }));
+    const body = h('tbody', {});
+    for (const g of R.groups) {
+      body.append(h('tr', { class: 'grp' }, h('th', { colspan: R.tiers.length + 1 }, g.title)));
+      for (const row of g.rows) {
+        body.append(h('tr', {}, h('th', { scope: 'row', class: 'feat-col' }, row.label),
+          R.tiers.map((_, i) => { const td = h('td', {}, mark((row.values || [])[i] ?? '–')); cells.push({ el: td, col: i }); return td; })));
+      }
+    }
+    v.append(h('div', { class: 'card table-wrap matrix' }, h('table', {}, h('thead', {}, head), body)));
+  };
+
+  builders.wiki = () => {
+    const v = $('#view-wiki');
+    const W = S.wiki || { entries: [] };
+    v.append(viewHead('Wiki', W.intro),
+      h('div', { class: 'acc' }, W.entries.map((e, i) =>
+        h('details', { open: i === 0 },
+          h('summary', {}, h('span', {}, h('span', { class: 't' }, e.title), e.sub ? h('span', { class: 's' }, e.sub) : null)),
+          h('div', { class: 'body' }, (e.body || []).map(t => mdEl('p', tpl(t))))))));
+  };
+
   builders.rules = () => {
     const v = $('#view-rules');
     const R = S.rules;
@@ -553,7 +658,7 @@
           h('summary', {}, h('span', {}, f.q)),
           h('div', { class: 'body' }, mdEl('p', tpl(f.a)))))),
       h('div', { class: 'card apply', style: 'margin-top:24px' },
-        h('p', {}, 'Still stuck? Open a ticket in our Discord and a staff member will help.'),
+        h('p', {}, 'Still stuck? Open a ticket in our Discord, or email ', h('a', { href: 'mailto:' + S.links.email }, S.links.email), '.'),
         h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Open the Discord')));
   };
 
@@ -570,6 +675,7 @@
     const mb = $('.menu-btn'); if (mb) mb.setAttribute('aria-expanded', 'false');
     if (!loaded[id]) { loaded[id] = true; if (builders[id]) builders[id](); }
     document.title = S.name + ' | ' + tab.label;
+    moveIndicator();
     window.scrollTo(0, 0);
   }
 

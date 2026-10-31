@@ -120,6 +120,9 @@ Everything you can change is in **`site.yml`**, a plain text file with comments 
 
 YAML rules: keep the spaces at the start of each line exactly as they are (no tabs), and put quote marks around text that contains a colon (`:`) or starts with `#` or `*`. If you make a mistake, the website shows a message with the line number instead of loading, and the data service logs the same message. Fix the line and commit again.
 
+- **Ranks table:** find `ranks:`. Rename the tiers and replace every `TBD` (one value per tier, in order). Use `yes` or `no` for ticks.
+- **Wiki page:** find `wiki:`. Copy an entry block to add a new system.
+- **Discord live box:** turn on Server Settings, Widget, "Enable server widget" in Discord, or the box only shows the join button.
 - **Add an FAQ question:** find `faq:`. Copy one `- q:` block with its `a:` line, paste it under the last one, and change the words.
 - **Add or edit a feature on the Home page:** find `features:`. Copy one block (`- title:` down to its `image:` line), paste it under the last one and change `title` and `text`.
 - **Add a picture to a feature:** on GitHub open the `assets` folder, click **Add file, Upload files**, upload your image and commit. Then set `image: /assets/yourfile.png` on that feature.
