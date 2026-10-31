@@ -153,6 +153,19 @@ join:
 # Empty ranks show TBD automatically. only: [zMorrow] means only that player is listed for the rank.
 staff:
   applyText: Want to join the team? Applications are handled in our Discord.
+  # The Apply box at the top of the Staff page. These requirements are DRAFTS (TBD): replace each line with your real requirement.
+  apply:
+    title: Apply for staff
+    text: We are always looking for helpful, active players. Applications are handled in our Discord.
+    button: Apply on Discord
+    requirements:
+      - 'Minimum age: TBD'
+      - 'Activity: TBD'
+      - 'Working microphone: TBD'
+  # Green dots next to staff names show who is in game or on Discord right now.
+  # In game uses the server list, so it only shows players the server lists (usually up to 12).
+  # On Discord matches a person's Minecraft name to their Discord name. If they differ, add them here as  MinecraftName: discordname
+  discordNames: {}
   ranks:
     - key: owner
       label: Owner

@@ -405,3 +405,33 @@ footer { margin-top: auto; border-top: 2px solid var(--line); background: rgba(4
 .pod.p3 { --pc: #e0894a; box-shadow: 0 0 36px -16px rgba(224,137,74,.5); }
 .pod.p1, .pod.p2, .pod.p3 { border-color: color-mix(in srgb, var(--pc) 55%, var(--line)); }
 td.rank { color: var(--muted); }
+
+/* ----- staff: apply box, tickets, presence ----- */
+.apply-box { display: flex; flex-wrap: wrap; gap: 24px 40px; align-items: center; justify-content: space-between; padding: 30px 34px; margin-bottom: 28px; background: linear-gradient(135deg, rgba(233,12,9,.16), rgba(85,221,51,.10)), rgba(17,26,61,.75); border: 1px solid var(--line); border-radius: 14px; }
+.apply-box h2 { font-size: 1.9rem; margin-bottom: 8px; }
+.apply-box p { margin: 0 0 12px; color: #cdd5f0; max-width: 56ch; }
+.req-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.req-list li { position: relative; padding-left: 20px; color: var(--text); }
+.req-list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 7px; height: 7px; background: var(--green); border-radius: 2px; transform: rotate(45deg); }
+.presence-key { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 40px; color: var(--muted); font-size: .85rem; }
+.presence-key span { display: inline-flex; align-items: center; gap: 8px; }
+.tier-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.tier-head h2 { margin: 0; }
+.rank-card li { position: relative; }
+.presence { display: inline-flex; gap: 5px; margin-left: auto; }
+.pd { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.pd.mc.on { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.pd.dc.on { background: #7b86ff; box-shadow: 0 0 8px #5865f2; }
+.owner-tier .tier-head { margin-bottom: 20px; }
+
+/* ----- search + copy feedback ----- */
+.search-box { margin: -12px 0 28px; }
+.search-box .search { max-width: 460px; }
+.search-box .empty { padding: 20px 0; text-align: left; }
+.acc details[hidden] { display: none; }
+.btn.done { background: var(--green); color: #04210a; border-color: var(--green); animation: pop .3s ease; }
+@keyframes pop { 0% { transform: scale(.92); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.support + .support { margin-top: 10px; }
+.compare-gap { margin-top: 56px; }
+.owner-person .presence { display: flex; margin: 10px 0 0; gap: 7px; }
+.owner-person .pd { width: 11px; height: 11px; }

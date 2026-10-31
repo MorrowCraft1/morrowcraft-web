@@ -149,8 +149,14 @@
       toast(ok ? 'Copied ' + (what || text) : 'Press Ctrl+C to copy');
     }
   }
-  const copyBtn = (text, what, label = 'Copy') =>
-    h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: () => copy(text, what) }, label);
+  const copyBtn = (text, what, label = 'Copy') => {
+    const b = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: async () => {
+      await copy(text, what);
+      b.classList.add('done'); b.textContent = 'Copied ✓';
+      clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('done'); b.textContent = label; }, 1500);
+    } }, label);
+    return b;
+  };
 
   const FALLBACK_HEAD = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23152048'/%3E%3Crect x='2' y='2' width='4' height='4' fill='%239aa5c8'/%3E%3C/svg%3E";
   function head(id, name, size = 32) {
@@ -166,6 +172,26 @@
     ? h('p', { class: 'notice' }, 'Showing sample data. Real data appears here once the data service is running (see SETUP.md).')
     : null;
   const updatedLabel = d => d && d.updated ? h('span', { class: 'updated' }, 'Updated ' + timeAgo(d.updated)) : null;
+
+  /* Search box that filters an accordion of <details> as you type. */
+  function searchAcc(acc, placeholder) {
+    const input = h('input', { type: 'search', placeholder, autocomplete: 'off', 'aria-label': placeholder });
+    const none = h('p', { class: 'empty', hidden: true }, 'Nothing matches that. Try another word or ask in our Discord.');
+    const items = [...acc.querySelectorAll('details')];
+    const first = items.findIndex(d => d.open);
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let hits = 0;
+      items.forEach((d, i) => {
+        const ok = !q || d.textContent.toLowerCase().includes(q);
+        d.hidden = !ok;
+        if (ok) hits++;
+        d.open = q ? ok : i === first;
+      });
+      none.hidden = hits > 0;
+    });
+    return h('div', { class: 'search-box' }, h('div', { class: 'search' }, input), none);
+  }
 
   function viewHead(title, sub, extra) {
     return h('div', { class: 'view-head' },
@@ -248,7 +274,9 @@
       h('div', {},
         h('nav', {}, nav),
         h('div', { class: 'support' }, h('span', { class: 'label' }, 'Support'),
-          h('a', { class: 'mail', href: 'mailto:' + L.email }, L.email), copyBtn(L.email, 'email', 'Copy email')))));
+          h('a', { class: 'mail', href: 'mailto:' + L.email }, L.email), copyBtn(L.email, 'email', 'Copy')),
+        h('div', { class: 'support' }, h('span', { class: 'label' }, 'Discord'),
+          h('a', { class: 'mail', href: L.discord, target: '_blank', rel: 'noopener' }, L.discord.replace(/^https?:\/\//, '')), copyBtn(L.discord, 'Discord link', 'Copy')))));
   }
 
   /* ---------------- views ---------------- */
@@ -577,9 +605,14 @@
     if (!data || !data.ranks) { body.replaceChildren(h('p', { class: 'empty card' }, 'The staff list is not available right now.')); return; }
 
     const out = [sampleNotice(data)];
-    out.push(h('div', { class: 'card apply', style: 'margin-bottom:30px' },
-      h('p', {}, S.staff.applyText),
-      h('a', { class: 'btn btn-green', href: S.links.applications, target: '_blank', rel: 'noopener' }, 'Apply on Discord')));
+    const A = S.staff.apply || {};
+    out.push(h('section', { class: 'apply-box' },
+      h('div', {}, h('h2', { class: 'display' }, A.title || 'Apply for staff'),
+        h('p', {}, A.text || S.staff.applyText),
+        A.requirements && A.requirements.length ? h('ul', { class: 'req-list' }, A.requirements.map(r => h('li', {}, mdEl('span', r)))) : null),
+      h('a', { class: 'btn btn-green', href: S.links.applications, target: '_blank', rel: 'noopener' }, A.button || 'Apply on Discord')));
+    out.push(h('p', { class: 'presence-key' },
+      h('span', {}, h('i', { class: 'pd mc on' }), 'In game now'), h('span', {}, h('i', { class: 'pd dc on' }), 'On Discord now')));
     const people = r => {
       let m = data.ranks[r.key] || [];
       if (r.only) { const ok = r.only.map(x => x.toLowerCase()); m = m.filter(p => ok.includes(String(p.n).toLowerCase())); }
@@ -592,23 +625,25 @@
       return h('article', { class: 'rank-card' + (m.length ? '' : ' open'), style: '--c:' + r.color },
         h('header', {}, h('h4', {}, r.label), m.length ? h('span', { class: 'count' }, String(m.length)) : null),
         m.length
-          ? h('ul', {}, m.map(p => h('li', {}, head(p.u, p.n, 40), h('b', {}, p.n))))
+          ? h('ul', {}, m.map(p => h('li', { 'data-name': p.n }, head(p.u, p.n, 40), h('b', {}, p.n),
+              h('span', { class: 'presence' }, h('i', { class: 'pd mc', title: 'Not in game' }), h('i', { class: 'pd dc', title: 'Not on Discord' })))))
           : h('div', { class: 'slot' }, 'Nobody has this rank'));
     };
     const ownerCard = key => {
       const r = S.staff.ranks.find(x => x.key === key);
       const m = r ? people(r) : [];
       return h('div', { class: 'owner-hero' }, m.length
-        ? m.map(p => h('div', { class: 'owner-person' },
+        ? m.map(p => h('div', { class: 'owner-person', 'data-name': p.n },
             h('img', { class: 'owner-skin', alt: '', width: 120, height: 120, src: 'https://mc-heads.net/body/' + encodeURIComponent(p.u || p.n) + '/200',
               onerror: ev => { ev.target.replaceWith(head(p.u, p.n, 96)); } }),
-            h('div', {}, h('small', {}, r.label), h('b', {}, p.n))))
+            h('div', {}, h('small', {}, r.label), h('b', {}, p.n), h('span', { class: 'presence' }, h('i', { class: 'pd mc', title: 'Not in game' }), h('i', { class: 'pd dc', title: 'Not on Discord' })))))
         : h('span', { class: 'tbd' }, 'TBD'));
     };
     for (const sec of S.staff.sections) {
       const owner = sec.style === 'owner';
       out.push(h('section', { class: 'tier' + (owner ? ' owner-tier' : '') },
-        h('h2', { class: 'display' }, sec.title),
+        h('div', { class: 'tier-head' }, h('h2', { class: 'display' }, sec.title),
+          owner ? null : h('a', { class: 'btn btn-ghost btn-sm', href: S.links.tickets || S.links.discord, target: '_blank', rel: 'noopener' }, 'Open a ticket')),
         owner ? (sec.ranks || []).map(ownerCard)
         : sec.groups
           ? h('div', { class: 'groups' }, sec.groups.map(g => h('div', { class: 'group' },
@@ -616,7 +651,34 @@
           : h('div', { class: 'rank-grid' }, (sec.ranks || []).map(cardFor))));
     }
     body.replaceChildren(...out.filter(Boolean));
+    markPresence(body);
+    setInterval(() => markPresence(body), 60000);
   };
+
+  /* Lights up the dots next to staff names: in game (server list sample) and on Discord (public widget). */
+  async function markPresence(root) {
+    const mc = new Set(), dc = new Set();
+    try {
+      const r = await fetchJSON('https://api.mcstatus.io/v2/status/java/' + encodeURIComponent(S.server.javaHost));
+      ((r.players && r.players.list) || []).forEach(p => mc.add(String(p.name_clean || p.name_raw).toLowerCase()));
+    } catch { /* leave dots grey */ }
+    const W = (S.discord && S.discord.widget) || {};
+    if (W.guildId) {
+      try {
+        const r = await fetchJSON('https://discord.com/api/guilds/' + encodeURIComponent(W.guildId) + '/widget.json');
+        (r.members || []).forEach(m => { if (m.status !== 'offline') dc.add(String(m.username).toLowerCase()); });
+      } catch { /* leave dots grey */ }
+    }
+    const alias = (S.staff && S.staff.discordNames) || {};
+    root.querySelectorAll('[data-name]').forEach(li => {
+      const n = li.dataset.name.toLowerCase();
+      const inGame = mc.has(n);
+      const onDisc = dc.has(n) || (alias[li.dataset.name] && dc.has(String(alias[li.dataset.name]).toLowerCase()));
+      const a = li.querySelector('.pd.mc'), b = li.querySelector('.pd.dc');
+      a.classList.toggle('on', inGame); a.title = inGame ? 'In game now' : 'Not in game';
+      b.classList.toggle('on', !!onDisc); b.title = onDisc ? 'On Discord now' : 'Not on Discord';
+    });
+  }
 
   builders.ranks = () => {
     const v = $('#view-ranks');
@@ -640,16 +702,48 @@
       return box;
     });
     v.append(h('div', { class: 'rank-boxes' }, boxes));
+
+    /* Compare table: every rank side by side. Tap a rank name to highlight its column. */
+    const items = R.items || [];
+    const labels = [...new Set(items.flatMap(r => (r.perks || []).map(p => p.label)))];
+    if (labels.length) {
+      const cells = [];
+      let active = null;
+      const mark = val => {
+        const t = String(val).trim().toLowerCase();
+        if (t === 'yes') return h('span', { class: 'tick yes', 'aria-label': 'Yes' }, '✓');
+        if (t === 'no') return h('span', { class: 'tick no', 'aria-label': 'No' }, '–');
+        return mdEl('span', String(val));
+      };
+      const hr = h('tr', {}, h('th', { class: 'feat-col' }, 'Compare'), items.map((r, i) => {
+        const th = h('th', { scope: 'col' }, h('button', { type: 'button', 'aria-pressed': 'false', onclick: () => {
+          active = active === i ? null : i;
+          cells.forEach(c => c.el.classList.toggle('on', c.col === active));
+          hr.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(active === j)));
+        } }, r.label));
+        cells.push({ el: th, col: i });
+        return th;
+      }));
+      const tb = h('tbody', {}, labels.map(l => h('tr', {}, h('th', { scope: 'row', class: 'feat-col' }, l),
+        items.map((r, i) => {
+          const hit = (r.perks || []).find(p => p.label === l);
+          const td = h('td', {}, mark(hit ? hit.value : '–'));
+          cells.push({ el: td, col: i });
+          return td;
+        }))));
+      v.append(h('h2', { class: 'display section-title' }, 'Compare ranks'),
+        h('div', { class: 'table-wrap matrix' }, h('table', {}, h('thead', {}, hr), tb)));
+    }
   };
 
   builders.wiki = () => {
     const v = $('#view-wiki');
     const W = S.wiki || { entries: [] };
-    v.append(viewHead('Wiki', W.intro),
-      h('div', { class: 'acc' }, W.entries.map((e, i) =>
-        h('details', { open: i === 0 },
-          h('summary', {}, h('span', {}, h('span', { class: 't' }, e.title), e.sub ? h('span', { class: 's' }, e.sub) : null)),
-          h('div', { class: 'body' }, (e.body || []).map(t => mdEl('p', tpl(t))))))));
+    const acc = h('div', { class: 'acc' }, W.entries.map((e, i) =>
+      h('details', { open: i === 0 },
+        h('summary', {}, h('span', {}, h('span', { class: 't' }, e.title), e.sub ? h('span', { class: 's' }, e.sub) : null)),
+        h('div', { class: 'body' }, (e.body || []).map(t => mdEl('p', tpl(t)))))));
+    v.append(viewHead('Wiki', W.intro), searchAcc(acc, 'Search the wiki, for example /bank'), acc);
   };
 
   builders.rules = () => {
@@ -677,12 +771,14 @@
 
   builders.faq = () => {
     const v = $('#view-faq');
+    const acc = h('div', { class: 'acc' }, S.faq.map((f, i) =>
+      h('details', { open: i === 0 },
+        h('summary', {}, h('span', {}, f.q)),
+        h('div', { class: 'body' }, mdEl('p', tpl(f.a))))));
     v.append(
       viewHead('FAQ', 'Quick answers to the questions we get most.'),
-      h('div', { class: 'acc' }, S.faq.map((f, i) =>
-        h('details', { open: i === 0 },
-          h('summary', {}, h('span', {}, f.q)),
-          h('div', { class: 'body' }, mdEl('p', tpl(f.a)))))),
+      searchAcc(acc, 'Search the FAQ, for example refund'),
+      acc,
       h('div', { class: 'card apply', style: 'margin-top:24px' },
         h('p', {}, 'Still stuck? Open a ticket in our Discord, or email ', h('a', { href: 'mailto:' + S.links.email }, S.links.email), '.'),
         h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Open the Discord')));
