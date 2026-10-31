@@ -371,16 +371,17 @@
       }).catch(dFallback);
     } else dFallback();
 
-    const card = (title, pill, count, rowEls) => h('section', { class: 'sv-card' },
+    const card = (title, pill, count, rowEls, extra) => h('section', { class: 'sv-card' },
       h('div', { class: 'sv-head' }, h('span', { class: 'label' }, title), pill),
       count,
-      h('div', { class: 'sv-row' }, rowEls));
+      h('div', { class: 'sv-row' }, rowEls),
+      extra ? h('div', { class: 'sv-extra' }, extra) : null);
     const discordLink = S.links.discord.replace(/^https?:\/\//, '');
     return h('div', { class: 'server-boxes' },
       card('Minecraft Server', mcPill, mcCount, [
         h('span', { class: 'v' }, S.server.javaHost),
-        h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort),
-        copyBtn(S.server.javaHost, 'server address')]),
+        copyBtn(S.server.javaHost, 'server address')],
+        h('span', { class: 'port-chip' }, 'Bedrock port ' + S.server.bedrockPort)),
       card('Discord Server', dPill, dCount, [
         h('a', { class: 'v', href: S.links.discord, target: '_blank', rel: 'noopener' }, discordLink),
         copyBtn(S.links.discord, 'Discord link')]));
