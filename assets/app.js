@@ -257,27 +257,15 @@
   /* Live status (tries mcstatus.io, then mcsrvstat.us) */
   function buildStatus() {
     const pill = h('span', { class: 'pill' }, 'Checking');
-    const count = h('div', { class: 'status-count' }, '–');
-    const meta = h('div', { class: 'status-meta' }, '');
-    const card = h('div', { class: 'card panel' },
-      h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Server status'), pill),
-      count, meta);
 
     function paint(s) {
       document.dispatchEvent(new CustomEvent('mc:status', { detail: s }));
-      if (!s) {
-        pill.className = 'pill'; pill.textContent = 'Unavailable';
-        count.textContent = '–'; meta.textContent = 'Could not reach the status service.';
-        return;
-      }
-      if (!s.online) {
-        pill.className = 'pill off'; pill.textContent = 'Offline';
-        count.textContent = '–'; meta.textContent = 'The server is not responding right now.';
-        return;
-      }
-      pill.className = 'pill on'; pill.textContent = 'Online';
-      count.replaceChildren(String(s.players ?? 0), h('small', {}, '/ ' + (s.max ?? '?') + ' players'));
-      meta.textContent = [s.version, s.motd].filter(Boolean).join(' · ');
+      pill.title = '';
+      if (!s) { pill.className = 'pill'; pill.textContent = 'Status unavailable'; return; }
+      if (!s.online) { pill.className = 'pill off'; pill.textContent = 'Offline'; return; }
+      pill.className = 'pill on';
+      pill.textContent = 'Online · ' + (s.players ?? 0) + '/' + (s.max ?? '?');
+      pill.title = [s.version, s.motd].filter(Boolean).join(' · ');
     }
 
     async function refresh() {
@@ -299,7 +287,7 @@
     }
     refresh();
     setInterval(refresh, (S.server.statusRefreshSeconds || 60) * 1000);
-    return card;
+    return pill;
   }
 
   /* Live player count and a one-click copy box under the intro. */
@@ -373,15 +361,16 @@
         h('p', { class: 'intro' }, S.intro),
         h('div', { class: 'hero-actions' },
           h('button', { class: 'btn btn-green', type: 'button', onclick: () => go('join') }, 'How to join'),
-          h('a', { class: 'btn btn-ghost', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
+          h('a', { class: 'btn btn-green', href: S.links.discord, target: '_blank', rel: 'noopener' }, 'Join the Discord'))),
       h('div', { class: 'connect' },
-        h('div', { class: 'card panel' },
-          h('div', { class: 'panel-head' }, h('span', { class: 'label' }, 'Connect')),
-          h('div', { class: 'addr' },
-            addr('java', 'Java', S.server.javaHost),
-            addr('bedrock', 'Bedrock', S.server.bedrockHost, S.server.bedrockPort)),
-          h('p', { class: 'label foot-note' }, 'Java version ' + S.server.version)),
-        buildStatus()),
+        h('div', { class: 'connect-main' },
+          h('span', { class: 'label' }, 'Server address'),
+          h('span', { class: 'ip' }, S.server.javaHost),
+          copyBtn(S.server.javaHost, 'server address', 'Copy')),
+        h('div', { class: 'connect-meta' },
+          buildStatus(),
+          h('span', {}, 'Java ' + S.server.version),
+          h('span', {}, 'Bedrock port ' + S.server.bedrockPort))),
       h('div', { class: 'tiles' }, S.tiles.map(t => h('div', { class: 'card tile ' + t.tone },
         h('h2', { class: 'display' }, t.title),
         h('p', {}, t.text),

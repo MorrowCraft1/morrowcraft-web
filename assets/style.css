@@ -499,3 +499,41 @@ th { background: none; }
 .support .mail { font-family: var(--mono); font-size: .98rem; color: var(--text); text-decoration: none; font-weight: 600; }
 .support .mail:hover { color: var(--green); }
 .matrix .tick { font-weight: 800; }
+
+/* =====================================================================
+   SIMPLER HOME: small status, one address row, matching buttons, small caps
+   ===================================================================== */
+.hero { gap: 18px; padding-top: 0; }
+.logo-frame { width: 104px; border-radius: 22px; padding: 3px; box-shadow: 0 0 36px -10px color-mix(in srgb, var(--red) 50%, transparent); }
+.logo-frame img { border-radius: 19px; }
+.wordmark { font-size: clamp(1.9rem, 8vw, 3.6rem); }
+.wm::after { height: .06em; }
+.intro { font-size: 1rem; max-width: 56ch; line-height: 1.7; }
+.hero-actions { gap: 12px; }
+.hero-actions .btn { min-width: 150px; }
+
+.connect { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 36px; grid-template-columns: none; }
+.connect-main { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 8px 8px 18px; max-width: 100%; }
+.connect-main .label { font-variant: small-caps; text-transform: none; letter-spacing: .06em; font-size: .92rem; }
+.connect-main .ip { font-family: var(--mono); font-size: 1.05rem; font-weight: 500; overflow-wrap: anywhere; }
+.connect-meta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; color: var(--muted); font-size: .85rem; }
+.connect-meta .pill { font-size: .72rem; padding: 3px 10px; }
+
+/* small caps instead of big shouting headings */
+.label, .group-title, .tile h2, .section-title, .tier > h2, .rank-card h4, .foot nav a, .matrix .grp th, .subtabs button, .chip, th {
+  font-variant: small-caps; text-transform: none; letter-spacing: .05em;
+}
+.label { font-size: .9rem; }
+.tile h2, .section-title { font-size: 1.45rem; }
+.tier > h2 { font-size: 1.3rem; }
+.view-head h1 { text-transform: none; font-variant: small-caps; letter-spacing: .03em; font-size: clamp(2rem, 4vw, 2.6rem); }
+.tab { text-transform: none; font-variant: small-caps; font-size: .98rem; letter-spacing: .06em; }
+.btn { text-transform: none; font-variant: small-caps; letter-spacing: .06em; font-size: 1rem; }
+.pill-btn { text-transform: none; font-variant: small-caps; font-size: .9rem; }
+.pill { text-transform: none; letter-spacing: .02em; font-weight: 600; }
+
+/* home blocks */
+.tiles { margin-top: 48px; gap: 36px; }
+.tile .btn { background: none; color: var(--green); border: 1px solid var(--green); }
+.tile .btn:hover { background: var(--green); color: #04210a; }
+.hero-actions .btn-green, .tile .btn { padding: 12px 22px; }
